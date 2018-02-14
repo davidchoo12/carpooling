@@ -1,16 +1,26 @@
-const { Pool, Client } = require('pg')
+const result = require('dotenv').config();
+// if(result.error) {
+//   throw result.error;
+// }
+const connectionString = process.env.DB_CONNECTIONSTRING;
+const { Pool, Client } = require('pg');
+const express = require('express');
+const app = express();
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'password',
-  port: 5432,
-})
+  connectionString: connectionString
+});
 
-pool.query('SELECT * from test', (err, res) => {
-  console.log(err, res)
-  pool.end()
-})
+function getTests() {
+  return pool.query('SELECT * from test')
+    .catch(err => console.error(e.stack));
+}
 
-// test changes 123
+app.get('/', (req, res) => {
+  getTests()
+    .then(data => {
+      res.send(data.rows)
+    });
+});
+
+app.listen(process.env.PORT || 3000);
