@@ -4,14 +4,34 @@
   "description": "CS2102 project",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
+    "dev": "npm run build && node index.js",
+    "lint": "eslint --ext .js,.vue src",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node server/index.js",
+    "watch": "webpack --watch"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^4.0.0",
     "dotenv": "^5.0.0",
     "express": "^4.16.2",
-    "pg": "^7.4.1"
+    "express-validator": "^5.0.2",
+    "pg": "^7.4.1",
+    "vue": "^2.5.13",
+    "vue-router": "^3.0.1",
+    "vue-toasted": "^1.1.24"
+  },
+  "devDependencies": {
+    "css-loader": "^0.28.10",
+    "eslint": "^4.18.1",
+    "eslint-plugin-vue": "^4.3.0",
+    "style-loader": "^0.20.2",
+    "vue-loader": "^14.1.1",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.9"
   }
 }
