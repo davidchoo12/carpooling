@@ -1,5 +1,5 @@
 const result = require('dotenv').config();
-if(result.error) {
+if(result.error && !process.env.DB_CONNECTIONSTRING) {
   throw result.error;
 }
 const connectionString = process.env.DB_CONNECTIONSTRING;
