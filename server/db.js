@@ -41,5 +41,11 @@ module.exports = {
       DELETE FROM PUBLIC.user
       WHERE email = $1`,
     [email]);
+  },
+  addDriver (icNum, email, name, contact, password) {
+    return pool.query(`
+      SELECT add_driver($1, $2, $3, $4, $5)
+    `, [icNum, email, name, contact, password])
+    .catch(err => console.error(err));
   }
 };

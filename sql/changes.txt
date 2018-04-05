@@ -1,0 +1,30 @@
+changes made
+user email varchar 254
+user contact char 8
+user check valid contact
+user check valid email
+  CONSTRAINT valid_contact CHECK (contact ~* '^\d{8}$'),
+  CONSTRAINT valid_email CHECK (email ~* '^[a-z0-9._%-]+@[a-z0-9._%-]+\.[a-z]{2,4}$')
+passenger user_email varchar 254
+driver user_email varchar 254
+driver ic_num char 9
+driver check valid ic_num
+  constraint valid_ic_num check (ic_num ~* '^[a-z][0-9]{7}[a-z]$')
+vehicle driver_ic_num char 9
+ride driver_ic_num char 9
+bid passenger_user_email varchar 254
+
+todo datatype changes and constraints
+vehicle
+  car plate
+    lookup singapore carplate format
+  seat
+    set min max
+ride
+  pax
+    same min max as seat
+  starting_bid
+    set min and max
+bid
+  amount
+    same min as starting_bid
