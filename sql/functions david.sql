@@ -49,3 +49,54 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+DROP FUNCTION public.get_staff_by_email(varchar);
+CREATE OR REPLACE FUNCTION public.get_staff_by_email(
+  staff_email varchar
+)
+RETURNS TABLE (
+  email varchar,
+  "name" varchar,
+  contact char,
+  "password" varchar
+)
+AS $$
+BEGIN
+RETURN QUERY
+  SELECT U.email, U.name, U.contact, U.password
+  FROM "user" U
+  WHERE U.email = staff_email
+  AND is_staff = true
+  AND is_deleted = false;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION add_ride(
+  ride_start_location varchar,
+  ride_start_datetime timestamp,
+  ride_end_location varchar,
+  ride_end_datetime timestamp,
+  ride_pax int4,
+  ride_starting_bid money,
+  ride_bid_closing_time timestamp,
+  ride_driver_ic_num char,
+  ride_vehicle_car_plate char)
+RETURNS BOOLEAN
+AS $$
+DECLARE
+  vehicle_seat INTEGER;
+BEGIN
+SELECT seat INTO vehicle_seat FROM vehicle WHERE car_plate = ride_vehicle_car_plate;
+IF(ride_pax > vehicle_seat) THEN
+  RETURN false;
+ELSE
+	INSERT INTO ride
+	(start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time, driver_ic_num, vehicle_car_plate, is_deleted)
+	VALUES
+	(ride_start_location, ride_start_datetime, ride_end_location, ride_end_datetime, ride_pax, ride_starting_bid, ride_bid_closing_time, ride_driver_ic_num, ride_vehicle_car_plate, false );
+	RETURN true;
+END IF;
+END;
+$$
+LANGUAGE plpgsql;

@@ -1,26 +1,27 @@
 const db = require('./db');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const authenticator = require('./authenticator');
+const authorizer = require('./authorizer');
+const roles = authorizer.roles;
 const apiRouter = require('express').Router();
 const { check, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
-apiRouter.get('/tests', (req, res) => {
-  db.getTests()
-    .then(data => {
-      res.send(data.rows)
-    });
-});
-apiRouter.post('/tests', (req, res) => {
-  db.addTest(req.body.name)
-    .then(data =>
-      res.send('added ' + data.rowCount + ' row(s).')
-    )
-    .catch(err => {
-      console.error(err.stack);
-      res.status(500).send('error');
-    });
+
+apiRouter.use(require('cookie-parser')());
+apiRouter.use(require('body-parser').urlencoded({ extended: true }));
+apiRouter.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+apiRouter.use(passport.initialize());
+apiRouter.use(passport.session());
+
+apiRouter.post('/admin/login',
+  authenticator('staff-local', '/login/admin'),
+  (req, res) => {
+    res.redirect('/admin');
 });
 apiRouter.get('/user', (req, res) => {
-  db.getUsers()
+  db.Users.getUsers()
     .then(data => {
       res.send(data.rows)
     })
@@ -74,5 +75,26 @@ apiRouter.delete('/user', (req, res) => {
     });
 });
 
+apiRouter.get('/ride', authorizer.allow([roles.staff]), (req, res) => {
+  db.Rides.getAll()
+    .then(data => {
+      res.send(data.rows)
+    })
+    .catch(errorHandler(res));
+});
+apiRouter.get('/ride/:id', (req, res) => {
+  db.Rides.get(req.params.id)
+    .then(data => {
+      res.send(data.rows)
+    })
+    .catch(errorHandler(res));
+});
+
+function errorHandler(res) {
+  return (err) => {
+    console.error(err.stack);
+    res.status(500).send('error');
+  };
+}
 
 module.exports = apiRouter;
