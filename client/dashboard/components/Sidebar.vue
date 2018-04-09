@@ -2,7 +2,9 @@
   <div class="sidebar col-sm-3 col-md-2">
     <ul class="nav nav-sidebar">
       <!-- <li><router-link to="/">Overview</router-link></li> -->
-      <li><router-link to="ride">Rides</router-link></li>
+      <li><router-link to="/vehicle">Vehicles</router-link></li>
+      <li><router-link to="/ride">Rides</router-link></li>
+      <li><router-link to="/bid">Bids</router-link></li>
     </ul>
   </div>
 </template>

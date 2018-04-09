@@ -28,7 +28,7 @@
       <div class="col-sm-10">
         <input
           v-model="formData.start_datetime"
-          type="datetime-local"
+          type="text"
           class="form-control"
           placeholder="2018-12-31 23:59">
       </div>
@@ -48,7 +48,7 @@
       <div class="col-sm-10">
         <input
           v-model="formData.end_datetime"
-          type="datetime-local"
+          type="text"
           class="form-control"
           placeholder="2018-12-31 23:59">
       </div>
@@ -68,7 +68,8 @@
       <div class="col-sm-10">
         <input
           v-model.number="formData.starting_bid"
-          type="text"
+          type="number"
+          step="0.01"
           class="form-control"
           placeholder="10">
       </div>
@@ -78,7 +79,7 @@
       <div class="col-sm-10">
         <input
           v-model.number="formData.bid_closing_time"
-          type="datetime-local"
+          type="datetime"
           class="form-control"
           placeholder="2018-12-01 23:59">
       </div>

@@ -78,16 +78,36 @@ apiRouter.delete('/user', (req, res) => {
 apiRouter.get('/ride', authorizer.allow([roles.staff]), (req, res) => {
   db.Rides.getAll()
     .then(data => {
-      res.send(data.rows)
+      let result = data.rows;
+      result.forEach(e => {
+        e.start_datetime = e.start_datetime.toISOString().replace('.000Z', '');
+        e.end_datetime = e.end_datetime.toISOString().replace('.000Z', '');
+        e.bid_closing_time = e.bid_closing_time.toISOString().replace('.000Z', '');
+      });
+      res.send(result);
     })
     .catch(errorHandler(res));
 });
 apiRouter.get('/ride/:id', (req, res) => {
   db.Rides.get(req.params.id)
     .then(data => {
-      res.send(data.rows)
+      let result = data.rows[0];
+      result.start_datetime = result.start_datetime.toISOString().replace('.000Z', '');
+      result.end_datetime = result.end_datetime.toISOString().replace('.000Z', '');
+      result.bid_closing_time = result.bid_closing_time.toISOString().replace('.000Z', '');
+      res.send(result);
     })
     .catch(errorHandler(res));
+});
+apiRouter.post('/ride', (req, res) => {
+  const { start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time, driver_ic_num, vehicle_car_plate } = req.body;
+  db.Rides.add(start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time, driver_ic_num, vehicle_car_plate)
+    .then(data => {
+      console.log('add ride', data);
+    })
+    .catch(err => {
+      errorHandler(res);
+    });
 });
 
 function errorHandler(res) {

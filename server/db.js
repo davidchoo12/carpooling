@@ -60,7 +60,7 @@ const Passengers = {
 
 const Rides = {
   getAll () {
-    return pool.query('SELECT * FROM PUBLIC.ride');
+    return pool.query('SELECT * FROM get_all_rides()');
   },
   get (id) {
     return pool.query('SELECT * FROM get_ride_by_id($1)', [id]);

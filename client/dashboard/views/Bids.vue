@@ -1,11 +1,11 @@
 <template>
   <div>
     <router-link
-      to="/ride/new"
-      class="btn btn-primary">Add ride</router-link>
+      to="/bid/new"
+      class="btn btn-primary">Add bid</router-link>
     <datatable
-      :row-identifiers="['id']"
-      data-url="/api/ride"
+      :row-identifiers="['passenger_user_email', 'ride_id']"
+      data-url="/api/bid"
     />
   </div>
 </template>
