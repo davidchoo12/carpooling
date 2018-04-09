@@ -1,0 +1,15 @@
+-- DROP FUNCTION public.get_driver_by_email(character varying);
+
+CREATE OR REPLACE FUNCTION get_driver_by_email(d_email varchar(100)) 
+returns varchar IS
+	driver_name varchar(100);
+$body$
+Begin
+	select "name" into driver_name
+	from "user"
+	where email = d_email;
+	return driver_name;
+end;
+$body$
+language plpgsql;
+

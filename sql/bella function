@@ -1,0 +1,253 @@
+--update_passenger(email, contact, password)
+DROP FUNCTION public.update_passenger(varchar, char, varchar);
+CREATE OR REPLACE FUNCTION public.update_passenger(
+    passenger_email varchar, 
+    passenger_contact char,
+    passenger_password varchar
+)
+  RETURNS boolean AS
+$BODY$
+BEGIN
+
+    UPDATE  "user"
+    SET contact = coalesce(passenger_contact, contact),
+        "password" = coalesce(passenger_password, "password")
+    WHERE email = passenger_email
+	AND NOT is_deleted
+	AND EXISTS (
+		SELECT 1
+		FROM passenger
+		WHERE user_email = passenger_email
+	);
+	RETURN true;
+END;
+$BODY$   
+LANGUAGE plpgsql;
+
+
+
+--update_driver(email, contact, password)
+DROP FUNCTION public.update_driver(varchar, char, varchar);
+CREATE OR REPLACE FUNCTION public.update_driver(
+  driver_email char,
+  driver_contact char,
+  driver_password varchar
+)
+  RETURNS boolean AS
+$BODY$
+BEGIN
+    UPDATE  "user"
+    SET contact = coalesce(driver_contact, contact),
+        password = coalesce(driver_password, password)
+    WHERE email = driver_email
+	AND NOT is_deleted
+	AND EXISTS (
+		SELECT 1
+		FROM driver
+		WHERE user_email = driver_email
+	);
+	RETURN true;
+END;
+$BODY$   
+LANGUAGE plpgsql;     
+
+
+
+--delete_passenger(email)
+CREATE OR REPLACE FUNCTION public.delete_passenger(passenger_email varchar)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+	rowcount INTEGER;
+BEGIN
+	WITH row AS (
+ 		UPDATE "user"
+  		SET is_deleted = true 
+  		WHERE email = passenger_email
+  			AND NOT is_deleted
+  			AND EXISTS(
+  				SELECT 1
+  				FROM passenger
+  				WHERE user_email = passenger_email
+  			)
+		RETURNING *
+	)
+	SELECT COUNT(*) INTO rowcount FROM row;
+	RETURN rowcount > 0;
+END;
+$BODY$
+  LANGUAGE plpgsql;
+
+
+--delete_driver(email)
+CREATE OR REPLACE FUNCTION public.delete_driver(driver_email varchar)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+	rowcount INTEGER;
+BEGIN
+	WITH row AS (
+ 		UPDATE "user"
+  		SET is_deleted = true 
+  		WHERE email = driver_email
+  			AND NOT is_deleted
+  			AND EXISTS(
+  				SELECT 1
+  				FROM driver
+  				WHERE user_email = driver_email
+  			)
+		RETURNING *
+	)
+	SELECT COUNT(*) INTO rowcount FROM row;
+	RETURN rowcount > 0;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+--delete_vehicle(car_plate)
+DROP FUNCTION public.delete_vehicle(varchar);
+CREATE OR REPLACE FUNCTION public.delete_vehicle(driver_car_plate varchar)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+	rowcount INTEGER;
+BEGIN
+	WITH row AS (
+ 		UPDATE vehicle
+  		SET is_deleted = true 
+  		WHERE car_plate = driver_car_plate
+  			AND NOT is_deleted
+		RETURNING *
+	)
+	SELECT COUNT(*) INTO rowcount FROM row;
+	RETURN rowcount > 0;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+--login_user(email, password)
+DROP FUNCTION public.login_user(varchar, varchar);
+CREATE OR REPLACE FUNCTION public.login_user(
+  user_email varchar, 
+  user_password varchar
+)
+RETURNS boolean AS
+$BODY$
+BEGIN
+  RETURN EXISTS (
+  SELECT *
+  FROM "user"
+  WHERE email = user_email
+    AND password = user_password
+    AND NOT is_deleted
+);
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+--[Ride] 
+--update_ride(id, start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time)
+DROP FUNCTION public.update_ride(INTEGER, varchar, timestamp, varchar, timestamp, INTEGER, numeric, timestamp);
+CREATE OR REPLACE FUNCTION public.update_ride(
+  ride_id INTEGER, 
+  ride_start_location varchar, 
+  ride_start_datetime timestamp, 
+  ride_end_location varchar, 
+  ride_end_datetime timestamp, 
+  ride_pax INTEGER, 
+  ride_starting_bid numeric(12,2), 
+  ride_bid_closing_time timestamp
+)
+RETURNS boolean AS
+$BODY$
+BEGIN
+
+    UPDATE  ride
+    SET 
+      start_location = coalesce(ride_start_location, start_location),
+      start_datetime = coalesce(ride_start_datetime, start_datetime),
+      start_datetime = coalesce(ride_end_location, end_location),
+      end_datetime = coalesce(ride_end_datetime, end_datetime),
+      pax = coalesce(ride_pax, pax),
+      starting_bid = coalesce(ride_starting_bid, starting_bid),
+      bid_closing_time = coalesce(ride_bid_closing_time, bid_closing_time)
+    
+    WHERE id = ride_id
+	AND NOT is_deleted
+	AND EXISTS (
+		SELECT 1
+		FROM dirver
+		WHERE ic_num = ride.driver_ic_num
+	)
+  AND EXISTS (
+    SELECT 1
+    FROM vehicle
+    WHERE car_plate = vehicle_car_plate
+  );
+	RETURN true;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+--[Vehicle] update_vehicle(car_plate, model, seat)
+DROP FUNCTION public.update_vehicle(varchar, varchar, INTEGER);
+CREATE OR REPLACE FUNCTION public.update_vehicle(
+  vehicle_car_plate varchar, 
+  vehicle_model varchar, 
+  vehicle_seat INTEGER
+)
+RETURNS boolean AS
+$BODY$
+BEGIN
+
+    UPDATE  vehicle
+    SET 
+      model = coalesce(vehicle_model, model),
+      seat = coalesce(vehicle_seat, seat)
+         
+    WHERE car_plate = vehicle_car_plate
+	AND NOT is_deleted
+	AND EXISTS (
+		SELECT 1
+		FROM dirver
+		WHERE ic_num = vehicle.driver_ic_num
+	);
+	RETURN true;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+--[Ride] delete_ride(id)
+--delete_ride(id)
+DROP FUNCTION public.delete_ride(INTEGER);
+CREATE OR REPLACE FUNCTION public.delete_ride(ride_id INTEGER)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+	rowcount INTEGER;
+BEGIN
+	WITH row AS (
+ 		UPDATE ride
+  		SET is_deleted = true 
+  		WHERE id = ride_id
+  			AND NOT is_deleted
+  			AND EXISTS(
+  				SELECT 1
+  				FROM dirver
+		    	WHERE ic_num = ride.driver_ic_num
+			)																												
+        AND EXISTS (
+          SELECT 1
+          FROM vehicle
+          WHERE car_plate = ride.vehicle_car_plate
+        )
+		RETURNING *
+	)
+	SELECT COUNT(*) INTO rowcount FROM row;
+	RETURN rowcount > 0;
+END;
+$BODY$
+  LANGUAGE plpgsql;
