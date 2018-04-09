@@ -1,0 +1,43 @@
+ALTER TABLE passenger
+DROP Constraint passenger_user_email_fkey;
+
+
+ALTER TABLE passenger
+ADD CONSTRAINT passenger_user_email_fkey
+FOREIGN KEY (user_email) REFERENCES "user" (email)
+ON DELETE NO ACTION
+on update no action
+
+
+
+
+ALTER TABLE driver
+DROP Constraint driver_user_email_fkey;
+
+
+ALTER TABLE driver
+ADD CONSTRAINT driver_user_email_fkey
+FOREIGN KEY (user_email) REFERENCES "user" (email)
+ON DELETE NO ACTION
+on update no action
+
+-----------------------------------------
+
+DROP FUNCTION public.update_driver(char, char, varchar);
+CREATE OR REPLACE FUNCTION public.update_driver(
+  driver_ic_num char,
+  driver_contact char,
+  driver_password varchar
+)
+RETURNS BOOLEAN
+AS $$
+BEGIN
+  update "user"
+  set "user".contact = driver_contact and "user".password = driver_password
+  where driver.ic_num = driver_ic_num and driver.user_email = "user".email and "user".is_deleted = false
+  
+  RETURN true;
+END;
+$$
+LANGUAGE plpgsql;
+SELECT add_driver('S1234567', 'driver@gmail.com', 'driver name', 'a', 'driver password');

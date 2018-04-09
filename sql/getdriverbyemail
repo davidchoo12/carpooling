@@ -1,0 +1,21 @@
+CREATE OR REPLACE FUNCTION get_driver_by_email(d_email varchar(100)) 
+RETURNS my_type 
+AS 
+$$
+
+DECLARE
+  result_record my_type;
+
+BEGIN
+
+  SELECT "name", ic_num, contact
+  INTO result_record.f1, result_record.f2, result_record.f3
+  FROM "user" inner join driver on "user".email = driver.user_email
+  WHERE email = d_email;
+
+  RETURN result_record;
+
+END
+$$ LANGUAGE plpgsql; 
+
+select * from get_driver_by_email('asdf@gma')

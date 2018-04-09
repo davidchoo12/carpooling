@@ -1,0 +1,86 @@
+drop function update_passenger(varchar(100), varchar(100), integer)
+
+--update_passenger(email, name, contact)
+CREATE OR REPLACE FUNCTION update_passenger(passenger_email varchar(100), passenger_name varchar(100), passenger_contact integer)
+  RETURNS boolean AS
+$BODY$
+BEGIN
+
+    UPDATE  "user"
+    SET "name" = passenger_name, 
+        contact = passenger_contact 
+    WHERE email = passenger_email
+	AND NOT is_deleted
+	AND EXISTS (
+		SELECT 1
+		FROM passenger
+		WHERE user_email = passenger_email
+	)
+	RETURN @@ROWCOUNT > 0;
+END;
+$BODY$   
+LANGUAGE plpgsql;   
+
+select update_passenger('aa', 'fdsa', 123)
+
+with rows as (
+UPDATE  "user"
+    SET "name" = 'name', 
+        contact = 123 
+    WHERE email = 'aa'
+	AND NOT is_deleted
+	AND EXISTS (
+		SELECT 1
+		FROM passenger
+		WHERE user_email = 'aa'
+	)
+	returning *
+	)
+	select * from rows
+
+--update_driver(email, name, contact)
+CREATE OR REPLACE FUNCTION update_driver(email varchar(100), name varchar(100), contact integer)
+  RETURNS boolean AS
+$BODY$
+BEGIN
+    UPDATE  driver
+    SET name = '@name', 
+        contact = '@contact' 
+    WHERE email = '@email'; 
+END;
+$BODY$   
+LANGUAGE plpgsql;   
+
+
+--delete_passenger(email)
+CREATE OR REPLACE FUNCTION delete_passenger(email)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+  v_del_cnt INT;
+BEGIN
+  delete from passenger 
+  where email = '@email';
+  GET DIAGNOSTICS v_del_cnt = ROW_COUNT;
+
+  return v_del_cnt;
+END;
+$BODY$
+  LANGUAGE plpgsql;
+
+
+--delete_driver(email)
+CREATE OR REPLACE FUNCTION delete_driver(email)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+  v_del_cnt INT;
+BEGIN
+  delete from driver 
+  where email = '@email';
+  GET DIAGNOSTICS v_del_cnt = ROW_COUNT;
+
+  return v_del_cnt;
+END;
+$BODY$
+  LANGUAGE plpgsql ;
