@@ -68,7 +68,9 @@ export default {
     }
   },
   created () {
-    fetch(this.dataUrl)
+    fetch(this.dataUrl, {
+      credentials: 'same-origin'
+    })
       .then(res => res.json())
       .then(body => this.tableData = body);
   },
