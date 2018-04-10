@@ -5,6 +5,7 @@
       class="btn btn-primary">Add Vehicle</router-link>
     <datatable
       :row-identifiers="['car_plate']"
+      :columns="['Car plate', 'Model', 'Seat', 'Driver IC Number']"
       data-url="/api/vehicle"
     />
   </div>

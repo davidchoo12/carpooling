@@ -1,11 +1,12 @@
 <template>
   <form @submit.prevent="submitForm">
     <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Car plate</label>
+      <label class="col-sm-2 col-form-label">Car Plate</label>
       <div class="col-sm-10">
         <input
-          v-model="$route.params.car_plate"
-          class="form-control-plaintext"
+          v-model="formData.car_plate"
+          :readonly="$route.params.car_plate"
+          :class="{ 'form-control-plaintext': $route.params.car_plate, 'form-control': !$route.params.car_plate }"
           type="text"
           minlength="8"
           maxlength="8"
@@ -67,7 +68,9 @@ export default {
   created () {
     if(this.$route.params.id) {
       const id = this.$route.params.id;
-      fetch('/api/vehicle/' + id)
+      fetch('/api/vehicle/' + id, {
+        credentials: 'same-origin'
+      })
         .then(res => res.json())
         .then(body => {
           Object.assign(this.formData, body);
@@ -81,7 +84,8 @@ export default {
         body: JSON.stringify(this.formData),
         headers: {
           'content-type': 'application/json'
-        }
+        },
+        credentials: 'same-origin'
       })
       .then(res => res.text())
       .then(body => this.$toasted.show(body, {

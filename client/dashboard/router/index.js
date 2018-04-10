@@ -45,7 +45,7 @@ export default new Router({
       component: BidForm,
     },
     {
-      path: '/bid/:id',
+      path: '/bid/:passenger_user_email/:ride_id',
       component: BidForm,
     },
   ],

@@ -70,17 +70,56 @@ const Rides = {
       [start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time, driver_ic_num, vehicle_car_plate]);
   },
   update (id, start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time, driver_ic_num, vehicle_car_plate) {
-    return pool.query('SELECT update_ride($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-      [id, start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time, driver_ic_num, vehicle_car_plate]);
+    return pool.query('SELECT update_ride($1, $2, $3, $4, $5, $6, $7, $8)',
+      [id, start_location, new Date(start_datetime), end_location, new Date(end_datetime), pax, starting_bid, bid_closing_time]);
   },
+  // testU () {
+  //   return pool.query('update ride set end_datetime = $1, starting_bid = $2 where id = 10', [new Date(), '$2']);
+  // },
   delete (id) {
     return pool.query('SELECT delete_ride($1)', [id]);
   },
 };
 
-const Vehicles = {};
+const Vehicles = {
+  getAll () {
+    return pool.query('SELECT * FROM get_all_vehicles()');
+  },
+  get (car_plate) {
+    return pool.query('SELECT * FROM get_vehicle_by_car_plate($1)', [car_plate]);
+  },
+  add (car_plate, model, seat, driver_ic_num) {
+    return pool.query('SELECT add_vehicle($1, $2, $3, $4)',
+      [car_plate, model, seat, driver_ic_num]);
+  },
+  update (car_plate, model, seat) {
+    return pool.query('SELECT update_vehicle($1, $2, $3)',
+      [car_plate, model, seat]);
+  },
+  delete (car_plate) {
+    return pool.query('SELECT delete_vehicle($1)', [car_plate]);
+  },
+};
 
-const Bids = {};
+const Bids = {
+  getAll () {
+    return pool.query('SELECT * FROM get_all_bids()');
+  },
+  get (passenger_user_email, ride_id) {
+    return pool.query('SELECT * FROM get_bid_by_id($1, $2)', [passenger_user_email, ride_id]);
+  },
+  add (passenger_user_email, ride_id, amount) {
+    return pool.query('SELECT add_bid($1, $2, $3)',
+      [passenger_user_email, ride_id, amount]);
+  },
+  update (passenger_user_email, ride_id, amount) {
+    return pool.query('SELECT update_bid_amount($1, $2, $3::money)',
+      [passenger_user_email, ride_id, amount]);
+  },
+  delete (passenger_user_email, ride_id) {
+    return pool.query('SELECT delete_bid($1, $2)', [passenger_user_email, ride_id]);
+  },
+};
 
 module.exports = {
   Passengers: Passengers,

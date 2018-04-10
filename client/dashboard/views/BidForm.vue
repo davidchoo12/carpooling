@@ -1,109 +1,47 @@
 <template>
   <form @submit.prevent="submitForm">
     <div
-      v-if="$route.params.id"
       class="form-group row">
-      <label class="col-sm-2 col-form-label">Id</label>
+      <label class="col-sm-2 col-form-label">Passenger User Email</label>
       <div class="col-sm-10">
         <input
-          v-model="$route.params.id"
-          readonly
-          class="form-control-plaintext"
-          type="text"
+          v-model="formData.passenger_user_email"
+          :readonly="$route.params.passenger_user_email"
+          :class="{ 'form-control-plaintext': $route.params.passenger_user_email, 'form-control': !$route.params.passenger_user_email }"
+          type="email"
+          placeholder="passenger@gmail.com">
+      </div>
+    </div>
+    <div
+      class="form-group row">
+      <label class="col-sm-2 col-form-label">Ride Id</label>
+      <div class="col-sm-10">
+        <input
+          v-model="formData.ride_id"
+          :readonly="$route.params.ride_id"
+          :class="{ 'form-control-plaintext': $route.params.ride_id, 'form-control': !$route.params.ride_id }"
+          type="number"
           placeholder="1">
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Start Location</label>
+      <label class="col-sm-2 col-form-label">Amount</label>
       <div class="col-sm-10">
         <input
-          v-model="formData.start_location"
+          v-model="formData.amount"
           type="text"
           class="form-control"
-          placeholder="COM1 Computing Drive">
+          placeholder="$10.00">
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Start Datetime</label>
+      <label class="col-sm-2 col-form-label">Time</label>
       <div class="col-sm-10">
         <input
-          v-model="formData.start_datetime"
-          type="text"
-          class="form-control"
-          placeholder="2018-12-31 23:59">
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Destination</label>
-      <div class="col-sm-10">
-        <input
-          v-model="formData.end_location"
-          type="text"
-          class="form-control"
-          placeholder="COM2 Computing Drive">
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">End Datetime</label>
-      <div class="col-sm-10">
-        <input
-          v-model="formData.end_datetime"
+          v-model="formData.time"
           type="text"
           class="form-control"
           placeholder="2018-12-31 23:59">
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Pax</label>
-      <div class="col-sm-10">
-        <input
-          v-model.number="formData.pax"
-          type="number"
-          class="form-control"
-          placeholder="4">
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Starting bid</label>
-      <div class="col-sm-10">
-        <input
-          v-model.number="formData.starting_bid"
-          type="number"
-          step="0.01"
-          class="form-control"
-          placeholder="10">
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Bid closing time</label>
-      <div class="col-sm-10">
-        <input
-          v-model.number="formData.bid_closing_time"
-          type="datetime"
-          class="form-control"
-          placeholder="2018-12-01 23:59">
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Driver IC number</label>
-      <div class="col-sm-10">
-        <input
-          v-model.number="formData.driver_ic_num"
-          type="text"
-          max-length="9"
-          class="form-control"
-          placeholder="S1234567X">
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Vehicle Car Plate</label>
-      <div class="col-sm-10">
-        <input
-          v-model.number="formData.vehicle_car_plate"
-          type="text"
-          max-length="8"
-          class="form-control"
-          placeholder="S1234ABC">
       </div>
     </div>
     <button
@@ -117,22 +55,20 @@ export default {
   data () {
     return {
       formData: {
-        start_location: '',
-        start_datetime: '',
-        end_location: '',
-        end_datetime: '',
-        pax: '',
-        starting_bid: '',
-        bid_closing_time: '',
-        driver_ic_num: '',
-        vehicle_car_plate: ''
+        passenger_user_email: '',
+        ride_id: '',
+        amount: '',
+        time: ''
       }
     }
   },
   created () {
-    if(this.$route.params.id) {
-      const id = this.$route.params.id;
-      fetch('/api/ride/' + id)
+    if(this.$route.params.passenger_user_email && this.$route.params.ride_id) {
+      const passenger_user_email = this.$route.params.passenger_user_email;
+      const ride_id = this.$route.params.ride_id;
+      fetch('/api/bid/' + passenger_user_email + '/' + ride_id, {
+        credentials: 'same-origin'
+      })
         .then(res => res.json())
         .then(body => {
           Object.assign(this.formData, body);
@@ -141,12 +77,13 @@ export default {
   },
   methods: {
     submitForm () {
-      fetch('/api/ride', {
-        method: this.$route.params.id ? 'PUT' : 'POST',
+      fetch('/api/bid', {
+        method: this.$route.params.passenger_user_email && this.$route.params.ride_id ? 'PUT' : 'POST',
         body: JSON.stringify(this.formData),
         headers: {
           'content-type': 'application/json'
-        }
+        },
+        credentials: 'same-origin'
       })
       .then(res => res.text())
       .then(body => this.$toasted.show(body, {

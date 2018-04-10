@@ -5,6 +5,7 @@
       class="btn btn-primary">Add bid</router-link>
     <datatable
       :row-identifiers="['passenger_user_email', 'ride_id']"
+      :columns="['Passenger User Email', 'Ride Id', 'Amount', 'Time']"
       data-url="/api/bid"
     />
   </div>

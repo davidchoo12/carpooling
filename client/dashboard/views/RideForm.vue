@@ -34,7 +34,7 @@
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Destination</label>
+      <label class="col-sm-2 col-form-label">End Location</label>
       <div class="col-sm-10">
         <input
           v-model="formData.end_location"
@@ -77,7 +77,7 @@
       <label class="col-sm-2 col-form-label">Bid closing time</label>
       <div class="col-sm-10">
         <input
-          v-model.number="formData.bid_closing_time"
+          v-model="formData.bid_closing_time"
           type="datetime-local"
           class="form-control"
           placeholder="2018-12-01 23:59">
@@ -131,7 +131,9 @@ export default {
   created () {
     if(this.$route.params.id) {
       const id = this.$route.params.id;
-      fetch('/api/ride/' + id)
+      fetch('/api/ride/' + id, {
+        credentials: 'same-origin'
+      })
         .then(res => res.json())
         .then(body => {
           Object.assign(this.formData, body);
@@ -143,9 +145,10 @@ export default {
       fetch('/api/ride', {
         method: this.$route.params.id ? 'PUT' : 'POST',
         body: JSON.stringify(this.formData),
+        credentials: 'same-origin',
         headers: {
           'content-type': 'application/json'
-        }
+        },
       })
       .then(res => res.text())
       .then(body => this.$toasted.show(body, {

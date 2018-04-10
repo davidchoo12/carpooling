@@ -6,7 +6,7 @@
       <thead>
         <tr>
           <th
-            v-for="col in Object.keys(tableData[0])"
+            v-for="col in columns"
             :key="col"
             scope="col">
             {{ col }}
@@ -35,7 +35,7 @@
               role="group"
               aria-label="Edit or Delete">
               <router-link
-                :to="{ path: rowIdentifiers.map(e => row[e]).join('-') }"
+                :to="{ path: rowIdentifiers.map(e => row[e]).join('/') }"
                 append
                 tag="button"
                 class="btn btn-outline-secondary btn-sm">Edit</router-link>
@@ -58,6 +58,10 @@ export default {
       required: true
     },
     rowIdentifiers: {
+      type: Array,
+      required: true
+    },
+    columns: {
       type: Array,
       required: true
     }

@@ -15,6 +15,9 @@ const authenticator = require('./authenticator');
 const authorizer = require('./authorizer');
 const roles = authorizer.roles;
 
+// db.Rides.update().then(data => console.log(data)).catch(console.log);
+// return;
+
 app.use(require('cookie-parser')());
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('express-session')({
@@ -30,7 +33,7 @@ app.use(passport.session());
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use((req, res, next) => {
-  console.log('req url:' + req.url);
+  console.log(req.method + ' ' + req.url);
   next();
 });
 app.use('/api', apiRouter);
