@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style type="text/css">
+#ProfilePage{
+    margin: 100px auto;
+    width: 600px;
+    border: 1px solid #9D7CBF;
+    background-color: #9D7CBF;
+}
+#LeftCol
+{
+    /* Move it to the left */
+    float: left;
+    width: 196px;
+    text-align: center;
+    padding: 26px 0px;
+}
+#Photo
+{
+    /* Width and height of photo container */
+    width: 200px;
+    height: 220px;
+    float: left;
+/* For visibility. Delete me */
+border: 1px solid  #9D7CBF;
+}
+#Info
+{
+    float: right;
+    width: 400px;
+    height: 220px;
+    border: 1px solid #9D7CBF;
+    text-align: center;
+
+    /* Move it to the right */
+    float: right;
+
+/* For visibility. Delete me
+border: 1px solid blue; */
+}
+
+h1 {
+    font-size: 14px; 
+    font-family: "Raleway", Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+h2 {
+    font-size: 12px; 
+    margin: 10;
+    font-family: "Raleway", Arial, Helvetica, sans-serif;
+}
+
+.content {
+    font-size: 12px; 
+    font-family: "Raleway", Arial, Helvetica, sans-serif
+}
+
+.card {
+  overflow: hidden;
+  background-color: rgb(224, 201, 248);
+  padding: 10px 10px;
+  width:70%;
+}
+
+  .avatar {
+      vertical-align: middle;
+      
+      width: 219px;
+      height: 217px;
+      /* border-radius: 50%; */
+  }
+
+
+* {box-sizing: border-box;}
+
+body { 
+  margin: 0;
+  font-family: 'Open Sans';
+}
+
+.header {
+  overflow: hidden;
+  background-color: #9D7CBF;
+  padding: 10px 10px;
+  width:100%;
+
+}
+
+footer {
+  overflow: hidden;
+  background-color: #9D7CBF;
+  padding: 10px 10px;
+  width:100%;
+}
+
+footer {
+  float: left;
+  color: white;
+  text-align: left;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 12px; 
+  line-height: 25px;
+  border-radius: 4px;
+  font: bitter;
+}
+
+.header a {
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 40px;
+  border-radius: 4px;
+}
+
+.header a.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.header a:hover {
+  background-color: white;
+  color: black;
+}
+
+.header a.active {
+  background-color: dodgerblue;
+  color: white;
+}
+
+.header-right {
+  float: right;
+}
+
+@media screen and (max-width: 500px) {
+  .header a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .header-right {
+    float: none;
+  }
+}
+</style>
+</head>
+<body>
+
+
+<div class="header">
+  <img src="img/logopopo.jpg" alt="logo" />
+  <div class="header-right">
+    <a href="#search">SEARCH</a>
+    <a href="#bid">BID</a>
+    <a href="#profile">PROFILE</a>
+    <a>Hello Children of Earth</a>
+  </div>
+</div>
+
+<p><button>BACK</button></p>
+
+<div id="ProfilePage">
+    <p></p>
+    <div id = "LeftCol">
+        <div id="Photo">
+                <img src="22.jpg" alt="Avatar" style="width:100%" class="avatar">
+        </div>
+    </div>
+  <h1>DRIVER PROFILE</h1>
+
+  <div id="Info" class="card">
+
+    <h1>John Doe</h1>
+    <p class="content">Identity Number: S1234567G</p>
+    <p class="content">Contact Number: 9999 1111</p>
+
+  </div> 
+</div>
+
+</div>
+</body>
+</html>
