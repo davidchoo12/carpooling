@@ -21,6 +21,7 @@ $func$
 LANGUAGE plpgsql;
 
 
+
 --GET RIDE BY ID
 CREATE OR REPLACE FUNCTION public.get_ride_by_id(ride_id int)
  RETURNS TABLE (
@@ -230,6 +231,45 @@ RETURN QUERY
   AND NOT is_staff
   AND NOT is_deleted;
 END;
+$func$
+LANGUAGE plpgsql;
+
+
+--GET VEHICLE BY CAR PLATE
+CREATE OR REPLACE FUNCTION public.get_vehicle_by_car_plate
+(vehicle_driver_car_plate char)
+ RETURNS TABLE (
+ car_plate char,
+ model varchar,
+ seat int) AS
+$func$
+
+BEGIN
+RETURN QUERY
+SELECT V.car_plate, V.model, V.seat
+FROM vehicle V
+WHERE is_deleted = 'f'
+AND driver_car_plate = vehicle_driver_car_plate;
+END
+$func$
+LANGUAGE plpgsql;
+
+
+--GET ALL Vehicles
+CREATE OR REPLACE FUNCTION public.get_all_vehicles()
+ RETURNS TABLE (
+ car_plate char,
+ model varchar,
+ seat int,
+ driver_ic_num char)AS		
+$func$
+
+BEGIN
+RETURN QUERY
+SELECT V.car_plate, V.model, V.seat, V.driver_ic_num
+FROM vehicle V
+WHERE is_deleted = 'f';
+END
 $func$
 LANGUAGE plpgsql;
 
