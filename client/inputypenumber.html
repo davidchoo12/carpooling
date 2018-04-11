@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style type="text/css">
+#ProfilePage{
+    margin: 100px auto;
+    width: 600px;
+    border: 1px solid #9D7CBF;
+    background-color: #9D7CBF;
+}
+
+
+#Info
+{
+    float: right;
+    width: 400px;
+    height: 220px;
+    border: 1px solid #9D7CBF;
+    text-align: center;
+}
+
+
+.button {
+    background-color: rgb(224, 201, 248);
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+h1 {
+    font-size: 14px; 
+    font-family: "Raleway", Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+h2 {
+    font-size: 12px; 
+    margin: 10;
+    font-family: "Raleway", Arial, Helvetica, sans-serif;
+}
+
+.content {
+    font-size: 12px; 
+    font-family: "Raleway", Arial, Helvetica, sans-serif
+}
+
+
+* {box-sizing: border-box;}
+
+body { 
+  margin: 0;
+  font-family: 'Open Sans';
+}
+
+.header {
+  overflow: hidden;
+  background-color: #9D7CBF;
+  padding: 10px 10px;
+  width:100%;
+
+}
+
+footer {
+  overflow: hidden;
+  background-color: #9D7CBF;
+  padding: 10px 10px;
+  width:100%;
+}
+
+footer {
+  float: left;
+  color: white;
+  text-align: left;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 12px; 
+  line-height: 25px;
+  border-radius: 4px;
+  font: bitter;
+}
+
+.header a {
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 40px;
+  border-radius: 4px;
+}
+
+.header a.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.header a:hover {
+  background-color: white;
+  color: black;
+}
+
+.header a.active {
+  background-color: dodgerblue;
+  color: white;
+}
+
+.header-right {
+  float: right;
+}
+
+@media screen and (min-width:500px){
+
+/*섹션안에 아티클 두개가 옆으로 하나는 밑에 그대로*/
+section{overflow: hidden;}
+#art1, #art2{float: left; width: 40%; }
+#art3{clear: both;}
+
+}
+@media screen and (min-width:1000px){
+
+#wrap{width: 90%; margin: 0 auto;}
+header{height: 500px;}
+
+section{}    
+#art1, #art2{width: 100%; }
+article img{display: inline;}
+.sub1{float: left; width: 40%;}
+.sub2{float: right; width: 40%;}
+
+}
+</style>
+</head>
+<body>
+
+
+        <!DOCTYPE html>
+
+        <html lang="ko">
+        <head>
+          <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Cafe</title>
+          <link href="cafe.css"rel="stylesheet"type="text/css">
+        </head>
+        <body>
+                <div class="header">
+                        <img src="img/logopopo.jpg" alt="logo" />
+                        <div class="header-right">
+                          <a href="#search">SEARCH</a>
+                          <a href="#bid">BID</a>
+                          <a href="#profile">PROFILE</a>
+                          <a>Hello Children of Earth</a>
+                        </div>
+                      </div>
+        
+            <section>
+        <article id="art1">
+            <div class="sub1"><img src="images/coffee.jpg" alt=""></div>
+            <div class="sub2">
+                <form onsubmit="" oninput="">
+                    <label for="amounts">Your Bids:</label>
+                    <input id="amounts" type="number" name="amounts" value="min bid amount">
+                    <input type="submit" value="Submit" id="submit">
+                </form>
+            </div>
+        </article>
+        </section>
+        </div>
+        </body>
+        </html>
+        
