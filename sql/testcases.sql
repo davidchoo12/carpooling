@@ -38,3 +38,16 @@ SELECT * FROM get_all_bids();
 SELECT * FROM get_bids_by_id('passenger@gmail.com','1');
 SELECT * FROM get_bids_by_passenger_user_email('passenger@gmail.com');
 SELECT * FROM get_bids_by_ride_id(1);
+
+select add_passenger('S1234567B', 'passenger1@gmail.com', 'name1','12341234','pass1')
+select add_passenger('S1234567C', 'passenger2@gmail.com', 'name2','12341234','pass2')
+select add_passenger('S1234567D', 'passenger3@gmail.com', 'name3','12341234','pass3')
+
+select add_ride('Kent Ridge MRT', TIMESTAMP '2018-4-12 10:23:54', 'Jurong Point', TIMESTAMP '2018-4-12 12:23:54', 2, 5::money, TIMESTAMP '2018-4-11 10:23:54', 'S2222222B', 'SAG2222G')
+select add_bid('passenger1@gmail.com', 13, 5::money)
+select add_bid('passenger2@gmail.com', 13, 6::money)
+select add_bid('passenger3@gmail.com', 13, 7::money)
+
+select get_ride_successful_bids(13)
+
+select update_bid_amount('passenger1@gmail.com', 13, 8::money)

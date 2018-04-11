@@ -275,6 +275,7 @@ IF EXISTS (
   AND ride_id = bid_ride_id
   AND is_deleted
 )
+
 THEN UPDATE bid
 SET amount = bid_amount,
     time = CURRENT_TIMESTAMP,
@@ -285,8 +286,8 @@ AND ride_id = bid_ride_id;
 return true;
 END IF;
 
-IF bid_amount >= (SELECT MIN(amount) FROM  get_ride_successful_bids(bid_ride_id))
-AND bid_amount >= (SELECT starting_bid FROM get_ride_by_id(bid_ride_id))
+--IF bid_amount >= (SELECT MIN(amount) FROM  get_ride_successful_bids(bid_ride_id))
+  IF bid_amount >= (SELECT starting_bid FROM get_ride_by_id(bid_ride_id))
 
 THEN INSERT INTO bid
 (passenger_user_email, ride_id, amount, time,  is_deleted)
@@ -296,6 +297,7 @@ VALUES
 RETURN true;
 END IF;
 
+RETURN false;
 END;
 $$
 LANGUAGE plpgsql;
@@ -358,21 +360,30 @@ LANGUAGE plpgsql;
 
 
 --[Ride] get_ride_successful_bids(id)
-CREATE OR REPLACE FUNCTION get_ride_successful_bids("id" int4)
+--drop FUNCTION public.get_ride_successful_bids(integer);
+CREATE OR REPLACE FUNCTION get_ride_successful_bids(
+	ride_bid_id Integer
+)
 
 RETURNS TABLE (
 passenger_user_email varchar,
 ride_id int, 
 amount money,
-"time" timestamp) AS
-$func$
+"time" timestamp
+) AS $func$
 BEGIN 
 RETURN QUERY
-SELECT B.passenger_user_email, B.ride_id, B.amount, B.time
+
+SELECT BID.passenger_user_email, BID.ride_id, BID.amount, BID.time FROM(
+SELECT B.passenger_user_email, B.ride_id, B.amount, B.time, row_number() OVER(ORDER BY B.amount desc) AS rownum
 FROM bid B
-WHERE is_deleted = 'f'
-AND B.ride_id = "id";
-END
+WHERE NOT B.is_deleted
+AND B.ride_id = ride_bid_id
+) as BID
+JOIN ride ON (ride.id = BID.ride_id)
+WHERE rownum <= ride.pax;
+
+END;
 $func$
 LANGUAGE plpgsql;
 
