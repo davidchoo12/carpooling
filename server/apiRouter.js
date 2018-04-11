@@ -11,7 +11,7 @@ const { matchedData, sanitize } = require('express-validator/filter');
 
 apiRouter.use(require('cookie-parser')());
 apiRouter.use(require('body-parser').urlencoded({ extended: true }));
-apiRouter.use(require('express-session')({ secret: 'keyboard cat' }));
+apiRouter.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 apiRouter.use(passport.initialize());
 apiRouter.use(passport.session());
 
