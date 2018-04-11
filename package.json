@@ -4,7 +4,7 @@
   "description": "CS2102 project",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --display-error-details",
     "dev": "npm run build && node index.js",
     "mon": "nodemon server/index.js",
     "lint": "eslint --ext .js,.vue src",
@@ -39,7 +39,7 @@
     "nodemon": "^1.17.3",
     "style-loader": "^0.20.2",
     "vue-loader": "^14.1.1",
-    "vue-template-compiler": "^2.5.13",
+    "vue-template-compiler": "^2.5.16",
     "webpack": "^4.0.1",
     "webpack-cli": "^2.0.9"
   }

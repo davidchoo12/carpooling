@@ -26,6 +26,9 @@ module.exports = {
       if (req.isAuthenticated() && allowedRoles.includes(req.user.role))
         return next();
       console.log('authorizer failed to authorize, redirecting');
+      if (req.session) {
+        req.session.returnTo = req.originalUrl || req.url;
+      }
       res.redirect(chooseRedirect(allowedRoles));
       }
     }
