@@ -100,3 +100,25 @@ END IF;
 END;
 $$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.search_rides(ride_start_location varchar, ride_end_location varchar, ride_start_date date)
+  RETURNS TABLE (
+  start_location varchar,
+  start_datetime timestamp,
+  end_location varchar,
+  end_datetime timestamp,
+  pax integer,
+  starting_bid money, 
+  bid_closing_time timestamp) AS
+$func$
+BEGIN
+RETURN QUERY
+SELECT R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time
+FROM ride R
+WHERE NOT R.is_deleted
+AND R.start_location like '%' || ride_start_location || '%' -- || is concatenation operator
+AND R.end_location like '%' || ride_end_location || '%'
+AND (ride_start_date is null OR cast(R.start_datetime as date) = ride_start_date);
+END
+$func$
+LANGUAGE plpgsql;

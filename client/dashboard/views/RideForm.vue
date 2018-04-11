@@ -17,7 +17,7 @@
       <label class="col-sm-2 col-form-label">Start Location</label>
       <div class="col-sm-10">
         <input
-          v-model="formData.startLocation"
+          v-model="formData.start_location"
           type="text"
           class="form-control"
           placeholder="COM1 Computing Drive">
@@ -27,17 +27,17 @@
       <label class="col-sm-2 col-form-label">Start Datetime</label>
       <div class="col-sm-10">
         <input
-          v-model="formData.startDatetime"
-          type="text"
+          v-model="formData.start_datetime"
+          type="datetime-local"
           class="form-control"
           placeholder="2018-12-31 23:59">
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Destination</label>
+      <label class="col-sm-2 col-form-label">End Location</label>
       <div class="col-sm-10">
         <input
-          v-model="formData.endLocation"
+          v-model="formData.end_location"
           type="text"
           class="form-control"
           placeholder="COM2 Computing Drive">
@@ -47,8 +47,8 @@
       <label class="col-sm-2 col-form-label">End Datetime</label>
       <div class="col-sm-10">
         <input
-          v-model="formData.endDatetime"
-          type="text"
+          v-model="formData.end_datetime"
+          type="datetime-local"
           class="form-control"
           placeholder="2018-12-31 23:59">
       </div>
@@ -67,9 +67,8 @@
       <label class="col-sm-2 col-form-label">Starting bid</label>
       <div class="col-sm-10">
         <input
-          v-model.number="formData.startingBid"
-          type="number"
-          step="0.01"
+          v-model.number="formData.starting_bid"
+          type="text"
           class="form-control"
           placeholder="10">
       </div>
@@ -78,8 +77,8 @@
       <label class="col-sm-2 col-form-label">Bid closing time</label>
       <div class="col-sm-10">
         <input
-          v-model.number="formData.bidClosingTime"
-          type="datetime"
+          v-model="formData.bid_closing_time"
+          type="datetime-local"
           class="form-control"
           placeholder="2018-12-01 23:59">
       </div>
@@ -88,7 +87,7 @@
       <label class="col-sm-2 col-form-label">Driver IC number</label>
       <div class="col-sm-10">
         <input
-          v-model.number="formData.driverIcNum"
+          v-model.number="formData.driver_ic_num"
           type="text"
           max-length="9"
           class="form-control"
@@ -99,7 +98,7 @@
       <label class="col-sm-2 col-form-label">Vehicle Car Plate</label>
       <div class="col-sm-10">
         <input
-          v-model.number="formData.vehicleCarPlate"
+          v-model.number="formData.vehicle_car_plate"
           type="text"
           max-length="8"
           class="form-control"
@@ -117,22 +116,24 @@ export default {
   data () {
     return {
       formData: {
-        startLocation: '',
-        startDatetime: '',
-        endLocation: '',
-        endDatetime: '',
+        start_location: '',
+        start_datetime: '',
+        end_location: '',
+        end_datetime: '',
         pax: '',
-        startingBid: '',
-        bidClosingTime: '',
-        driverIcNum: '',
-        vehicleCarPlate: ''
+        starting_bid: '',
+        bid_closing_time: '',
+        driver_ic_num: '',
+        vehicle_car_plate: ''
       }
     }
   },
   created () {
     if(this.$route.params.id) {
       const id = this.$route.params.id;
-      fetch('/api/ride/' + id)
+      fetch('/api/ride/' + id, {
+        credentials: 'same-origin'
+      })
         .then(res => res.json())
         .then(body => {
           Object.assign(this.formData, body);
@@ -144,9 +145,10 @@ export default {
       fetch('/api/ride', {
         method: this.$route.params.id ? 'PUT' : 'POST',
         body: JSON.stringify(this.formData),
+        credentials: 'same-origin',
         headers: {
           'content-type': 'application/json'
-        }
+        },
       })
       .then(res => res.text())
       .then(body => this.$toasted.show(body, {

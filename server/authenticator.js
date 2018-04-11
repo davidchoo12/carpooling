@@ -108,6 +108,9 @@ passport.deserializeUser(function(emailAndRole, done) {
   });
 });
 
-module.exports = (strategyName, redirectUrl) => {
-  return passport.authenticate(strategyName, { failureRedirect: redirectUrl });
+module.exports = (strategyName, successRedirect, failureRedirect) => {
+  return passport.authenticate(strategyName, {
+    successReturnToOrRedirect: successRedirect,
+    failureRedirect: failureRedirect
+  });
 };

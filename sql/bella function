@@ -105,8 +105,8 @@ $BODY$
 LANGUAGE plpgsql;
 
 --delete_vehicle(car_plate)
-DROP FUNCTION public.delete_vehicle(varchar);
-CREATE OR REPLACE FUNCTION public.delete_vehicle(driver_car_plate varchar)
+DROP FUNCTION public.delete_vehicle(char);
+CREATE OR REPLACE FUNCTION public.delete_vehicle(driver_car_plate char)
   RETURNS boolean AS
 $BODY$
 DECLARE
@@ -148,7 +148,7 @@ LANGUAGE plpgsql;
 
 --[Ride] 
 --update_ride(id, start_location, start_datetime, end_location, end_datetime, pax, starting_bid, bid_closing_time)
-DROP FUNCTION public.update_ride(INTEGER, varchar, timestamp, varchar, timestamp, INTEGER, numeric, timestamp);
+DROP FUNCTION public.update_ride(INTEGER, varchar, timestamp, varchar, timestamp, INTEGER, money, timestamp);
 CREATE OR REPLACE FUNCTION public.update_ride(
   ride_id INTEGER, 
   ride_start_location varchar, 
@@ -156,7 +156,7 @@ CREATE OR REPLACE FUNCTION public.update_ride(
   ride_end_location varchar, 
   ride_end_datetime timestamp, 
   ride_pax INTEGER, 
-  ride_starting_bid numeric(12,2), 
+  ride_starting_bid money, 
   ride_bid_closing_time timestamp
 )
 RETURNS boolean AS
@@ -167,7 +167,7 @@ BEGIN
     SET 
       start_location = coalesce(ride_start_location, start_location),
       start_datetime = coalesce(ride_start_datetime, start_datetime),
-      start_datetime = coalesce(ride_end_location, end_location),
+      end_location = coalesce(ride_end_location, end_location),
       end_datetime = coalesce(ride_end_datetime, end_datetime),
       pax = coalesce(ride_pax, pax),
       starting_bid = coalesce(ride_starting_bid, starting_bid),
@@ -192,9 +192,9 @@ LANGUAGE plpgsql;
 
 
 --[Vehicle] update_vehicle(car_plate, model, seat)
-DROP FUNCTION public.update_vehicle(varchar, varchar, INTEGER);
+DROP FUNCTION public.update_vehicle(char, varchar, INTEGER);
 CREATE OR REPLACE FUNCTION public.update_vehicle(
-  vehicle_car_plate varchar, 
+  vehicle_car_plate char, 
   vehicle_model varchar, 
   vehicle_seat INTEGER
 )
@@ -236,7 +236,7 @@ BEGIN
   			AND NOT is_deleted
   			AND EXISTS(
   				SELECT 1
-  				FROM dirver
+  				FROM driver
 		    	WHERE ic_num = ride.driver_ic_num
 			)																												
         AND EXISTS (
@@ -251,3 +251,51 @@ BEGIN
 END;
 $BODY$
   LANGUAGE plpgsql;
+
+
+--SELECT login_user('driver5@gmail.com','driver password');
+
+
+
+--add_bid
+DROP FUNCTION public.add_bid(varchar, INTEGER, money);
+CREATE OR REPLACE FUNCTION public.add_bid(
+  bid_passenger_user_email varchar(254), 
+  bid_ride_id INTEGER,  
+  bid_amount money
+)
+RETURNS BOOLEAN AS $$ 
+
+BEGIN
+
+IF EXISTS (
+  SELECT 1
+  FROM bid
+  WHERE passenger_user_email = bid_passenger_user_email
+  AND ride_id = bid_ride_id
+  AND is_deleted
+)
+THEN UPDATE bid
+SET amount = bid_amount,
+    time = CURRENT_TIMESTAMP,
+    is_deleted = false
+WHERE passenger_user_email = bid_passenger_user_email
+AND ride_id = bid_ride_id;
+
+return true;
+END IF;
+
+IF bid_amount >= (SELECT MIN(amount) FROM  get_ride_successful_bids(bid_ride_id))
+AND bid_amount >= (SELECT starting_bid FROM get_ride_by_id(bid_ride_id))
+
+THEN INSERT INTO bid
+(passenger_user_email, ride_id, amount, time,  is_deleted)
+VALUES
+(bid_passenger_user_email,bid_ride_id, bid_amount, CURRENT_TIMESTAMP, false);
+
+RETURN true;
+END IF;
+
+END;
+$$
+LANGUAGE plpgsql;
