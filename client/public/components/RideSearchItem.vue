@@ -26,7 +26,7 @@
       <br>
       <h5>{{ minBid }}</h5>
       <button class="btn btn-large btn-primary">
-        BID NOW!!!!
+        BID NOW
       </button>
     </div>
   </div>

@@ -1,6 +1,47 @@
 <template>
   <div class="container">
     <div class="row justify-content-center">
+      <div class="col-6">
+        <h2 class="search-form-title">Select your route</h2>
+        <form
+          action=""
+          class="search-form">
+          <div class="form-group">
+            <label for="start-location-input">Pick-up Location</label>
+            <input
+              id="start-location-input"
+              type="text"
+              class="form-control"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="end-location-input">Drop-off Location</label>
+            <input
+              id="end-location-input"
+              type="text"
+              class="form-control"
+              required>
+          </div>
+          <div class="form-group row">
+            <div class="col-6">
+              <label for="departure-date-input">Depart On</label>
+              <input
+                id="departure-date-input"
+                type="datetime-local"
+                class="form-control"
+                required>
+            </div>
+            <div class="col-6">
+              <button
+                class="btn btn-primary"
+                type="submit">SEARCH
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row justify-content-center">
       <div class="col-8">
         <RideSearchItem
           v-for="ride in rideList"
@@ -45,5 +86,21 @@ export default {
 </script>
 
 <style>
-
+  .search-form .btn {
+    position: absolute;
+    right: 15px;
+    bottom: 0;
+  }
+  .search-form {
+    border: 1px solid #6f42c1;
+    padding: 15px;
+    margin-bottom: 30px;
+  }
+  .search-form-title {
+    background-color: #6f42c1;
+    color: white;
+    margin: 0;
+    margin-top: 15px;
+    padding: 15px;
+  }
 </style>
