@@ -2,158 +2,206 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+    <link rel="stylesheet" href="../dist/public/css/open-iconic-bootstrap.min.css">
 
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        h1 {
-            margin-top: 1cm;
-            font-size: 18pt;
-            margin-bottom: 1cm;
-        }
+    h1 {
+      margin-top: 1cm;
+      font-size: 18pt;
+      margin-bottom: 1cm;
+    }
 
-        p1 {
-
-
-            font-size: 12pt;
-            font-family: 'Open Sans';
-            margin-left: 50px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            margin-right: 30px;
-
-        }
-
-        p2 {
-            margin-right: 40px;
-            float: right;
-        }
-
-        .div1 {
-            width: 600px;
-            height: 180px;
-            border: 3px solid black;
-            text-align: left;
-        }
-
-        .div2 {
-
-            width: 80px;
-            height: 50px;
-            background-color: #9D7CBF;
-            margin-left: 500px;
-            text-align: center;
-            font-size: 25pt;
-
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Open Sans';
-            font-size: 12pt;
-
-        }
-
-        .header {
-            overflow: hidden;
-            background-color: #9D7CBF;
-            padding: 10px 10px;
-            width: 100%;
-
-        }
+    p1 {
 
 
-        .header a {
-            float: left;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            text-decoration: none;
-            font-size: 18px;
-            line-height: 40px;
-            border-radius: 4px;
-        }
+      font-size: 12pt;
+      font-family: 'Open Sans';
+      margin-left: 50px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      margin-right: 30px;
 
-        .header a.logo {
-            font-size: 25px;
-            font-weight: bold;
-        }
+    }
 
-        .header a:hover {
-            background-color: white;
-            color: black;
-        }
+    p2 {
+      margin-right: 40px;
+      float: right;
+    }
+
+    .div1 {
+      width: 600px;
+      height: 180px;
+      border: 3px solid black;
+      text-align: left;
+    }
+
+    .div2 {
+
+      width: 80px;
+      height: 50px;
+      background-color: #9D7CBF;
+      margin-left: 500px;
+      text-align: center;
+      font-size: 25pt;
+
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Open Sans';
+      font-size: 12pt;
+
+    }
+
+    .header {
+      overflow: hidden;
+      background-color: #9D7CBF;
+      padding: 10px 10px;
+      width: 100%;
+
+    }
 
 
-        .header-right a:hover {
-            background-color: white;
-            color: black;
-        }
+    .header a {
+      float: left;
+      color: white;
+      text-align: center;
+      padding: 12px;
+      text-decoration: none;
+      font-size: 18px;
+      line-height: 40px;
+      border-radius: 4px;
+    }
 
-        .header a.active {
-            background-color: dodgerblue;
-        }
+    .header a.logo {
+      font-size: 25px;
+      font-weight: bold;
+    }
 
-        .header-right {
-            float: right;
-            color: white;
+    .header a:hover {
+      background-color: white;
+      color: black;
+    }
 
-        }
 
-        @media screen and (max-width: 500px) {
-            .header a {
-                float: none;
-                display: block;
-                text-align: left;
-            }
-            .header-right {
-                float: none;
-                color: white;
-            }
-        }
-    </style>
+    .header-right a:hover {
+      background-color: white;
+      color: black;
+    }
+
+    .header a.active {
+      background-color: dodgerblue;
+    }
+
+    .header-right {
+      float: right;
+      color: white;
+
+    }
+
+    .col-sm-1 {
+      background:#9D7CBF;
+      width:10px;
+      text-align: center;
+      font-family: 'Open Sans';
+      color:white;
+    }
+
+      .col-sm-7 {
+        font-size:15pt;
+    }
+
+    @media screen and (max-width: 500px) {
+      .header a {
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .header-right {
+        float: none;
+        color: white;
+      }
+    }
+
+  </style>
 
 </head>
 
 <body>
 
 
-    <div class="header">
-        <img src="img/logopopo.jpg" alt="logo" />
-        <div class="header-right">
-            <a href="#search">SEARCH</a>
-            <a href="#bid">BID</a>
-            <a href="#profile">PROFILE</a>
-            <a>Hello Children of Earth
-                <a/>
-        </div>
+  <div class="header">
+    <img src="img/logopopo.jpg" alt="logo" />
+    <div class="header-right">
+      <a href="#search">SEARCH</a>
+      <a href="#bid">BID</a>
+      <a href="#profile">PROFILE</a>
+      <a>Hello Children of Earth
+        <a/>
     </div>
+  </div>
 
-    <div class="container">
-        <div style="padding-left:10px">
+  <div class="container">
+    <div style="padding-left:10px">
 
-            <h1>Bidding Page</h1>
+      
+      <h1>Bidding Page</h1>
 
-            <div class="row">
-                <div class ="col-sm-4">Kent Ridge Street 11 Block 21 SG 521214</div>
-                <div class = "col-sm-7">5</div>
-                <div class ="col-sm-8">Jurong East Street  Block 11 SG 521287 </div>
-                <br> <br>
-                <div class ="col-sm-4">Journey on: 2018-05-05 / 12:30 PM </div>
-                <div class = "col-sm-5">3</div>
-                <div class = "col-sm-1">Left</div>
-                <div class ="col-sm-8">Bid closing at: 2018-05-05 / 15:50 PM</div>
+      <div class="jumbotron">
+
+
+      <div class="row">
+        <div class="col-sm-7">  
+            <span 
+            class="oi oi-map-marker"
+            title="marker"></span>
+          <kbd>Kent Ridge Street 11 Block 21 SG 521214</kbd></div>
+        <div class="col-sm-1" style = "font-size:30px">0</div>
+
+      </div>
+
+    
+
+      <div class="row">
+          <div class="col-sm-7">
+          <span
+          class="oi oi-map-marker"
+          title="map marker"></span>
+          <kbd>Jurong West Street 21 Block 221 SG 521214</kbd></div>
+          <div class="col-sm-5"> 
+          </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-7"><kbd>Journey on: 2018-05-05 / 12:30 PM</kbd></div>
+            <div class="col-sm-5">3  
+                <span class="oi oi-person"
+                title="person"></span>
+              Left</div>
+          </div>
+
+          <br>
+
+          <div class="row">
+              <div class="col-sm-7"><kbd>Bid closing at:  2018-05-05 / 15.50 PM</kbd></div>
+              <div class="col-sm-5">KIA
+                  <img class="img-responsive" src="img/car-xxl.png" alt="car" width="35" height="35"> 
+              </div>
             </div>
-         
+
 
 
 
