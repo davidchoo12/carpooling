@@ -43,16 +43,16 @@ app.use('/api', apiRouter);
 // });
 
 app.use('/admin', authorizer.allow([roles.staff]), express.static(PATH_DIST_DASHBOARD));
-app.use('/login/admin', express.static(path.join(__dirname, '../client/login/staff.html')));
-app.use('/login/driver', express.static(path.join(__dirname, '../client/login/driver.html')));
-app.use('/login', express.static(path.join(__dirname, '../client/login/passenger.html')));
+// app.use('/login/admin', express.static(path.join(__dirname, '../client/login/staff.html')));
+// app.use('/login/driver', express.static(path.join(__dirname, '../client/login/driver.html')));
+app.use('/login', express.static(path.join(__dirname, '../client/login'), { extensions: ['html'] }));
 
 // app.use(history({
 //   disableDotRule: true,
 //   verbose: true
 // }));
 // app.use('/admin', express.static(PATH_DIST_DASHBOARD));
-app.use('/', (req, res, next) => {console.log('public here'); next(); }, express.static(PATH_DIST_PUBLIC));
+app.use('/', express.static(PATH_DIST_PUBLIC));
 
 // app.get('/admin/*', (req, res) => {
 //   res.sendFile(path.join(PATH_DIST_DASHBOARD, 'index.html'));
