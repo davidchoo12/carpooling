@@ -4,12 +4,13 @@
       <div class="col-6">
         <h2 class="search-form-title">Select your route</h2>
         <form
-          action=""
-          class="search-form">
+          class="search-form"
+          @submit.prevent="updateList">
           <div class="form-group">
             <label for="start-location-input">Pick-up Location</label>
             <input
               id="start-location-input"
+              v-model="formData.startLocation"
               type="text"
               class="form-control"
               required>
@@ -18,6 +19,7 @@
             <label for="end-location-input">Drop-off Location</label>
             <input
               id="end-location-input"
+              v-model="formData.endLocation"
               type="text"
               class="form-control"
               required>
@@ -27,6 +29,7 @@
               <label for="departure-date-input">Depart On</label>
               <input
                 id="departure-date-input"
+                v-model="formData.departureDate"
                 type="datetime-local"
                 class="form-control"
                 required>
@@ -45,7 +48,7 @@
       <div class="col-8">
         <RideSearchItem
           v-for="ride in rideList"
-          :key="ride"
+          :key="ride.id"
           :id="ride.id"
           :start-location="ride.startLocation"
           :end-location="ride.endLocation"
@@ -62,24 +65,34 @@ export default {
   components: {
     'RideSearchItem': RideSearchItem
   },
-  data() {
+  data () {
     return {
+      formData: {
+        startLocation: '',
+        endLocation: '',
+        departureDate: ''
+      },
       rideList: [
         {
-          id: 1,
+          id: '1',
           startLocation: 'Kent Ridge Street 11 Block 21 SG 521214',
           endLocation: 'Jurong East Street 21 Block 11 SG 521287',
           departureTimestamp: '4/11/2018 3:25 PM',
           minBid: '$20.00'
         },
         {
-          id: 2,
+          id: '2',
           startLocation: 'Kent Ridge Street 11 Block 21 SG 521214',
           endLocation: 'Jurong East Street 21 Block 11 SG 521287',
           departureTimestamp: '4/11/2018 3:25 PM',
           minBid: '$20.00'
         }
       ]
+    }
+  },
+  methods: {
+    updateList () {
+      console.log(this.formData);
     }
   }
 }

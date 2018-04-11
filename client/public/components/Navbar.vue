@@ -2,7 +2,8 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a
       href=""
-      class="navbar-brand">PoPo
+      class="navbar-brand">
+      <img src="img/logopopo.jpg">
     </a>
     <button
       class="navbar-toggler"
@@ -38,3 +39,9 @@ export default {
   name: 'Navbar'
 }
 </script>
+
+<style scoped>
+  .navbar-brand img {
+    height: 40px;
+  }
+</style>
