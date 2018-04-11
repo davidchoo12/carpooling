@@ -1,12 +1,12 @@
 <template>
   <div id="app">
     <navbar />
-    <router-view class="col-sm-9 offset-sm-3 col-md-10 offset-md-2"/>
+    <router-view />
   </div>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar';
+import Navbar from './components/Navbar';
 export default {
   name: 'App',
   components: {

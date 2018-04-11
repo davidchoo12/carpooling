@@ -1,19 +1,71 @@
 <template>
-  <div class="item">
-    <p>Kent Ridge Street 11 Block 21 SG 521214</p>
-    <p>Jurong East Street 21 Block 11 SG 521287</p>
+  <div class="item row justify-content-center">
+    <div class="col-9">
+      <div>
+        <span
+          class="oi oi-map-marker"
+          title="map marker"
+          aria-hidden="true" />{{ startLocation }}
+        <br>
+        <span
+          class="oi oi-arrow-bottom"
+          title="arrow bottom"
+          aria-hidden="true" />
+        <br>
+        <span
+          class="oi oi-map-marker"
+          title="map marker"
+          aria-hidden="true" />{{ endLocation }}
+      </div>
+      <small>Depart at:</small>
+      <br>
+      <span>{{ departureTimestamp }}</span>
+    </div>
+    <div class="col-3 text-center">
+      <small>Minimum bid:</small>
+      <br>
+      <h5>{{ minBid }}</h5>
+      <button class="btn btn-large btn-primary">
+        BID NOW!!!!
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'RideSearchItem'
+  name: 'RideSearchItem',
+  props: {
+    id: {
+      type: String,
+      required: true
+    },
+    startLocation: {
+      type: String,
+      required: true
+    },
+    endLocation: {
+      type: String,
+      required: true
+    },
+    departureTimestamp: {
+      type: String,
+      required: true
+    },
+    minBid: {
+      type: String,
+      required: true
+    }
+  }
 }
 </script>
 
 <style>
   .item {
-    min-height: 50px;
-    min-width: 200px;
+    border-bottom: 1px solid grey;
+    padding: 15px;
+  }
+  .oi-map-marker:before {
+    margin-right: 15px;
   }
 </style>
