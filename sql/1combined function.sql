@@ -510,12 +510,14 @@ CREATE OR REPLACE FUNCTION public.get_all_rides()
  end_datetime timestamp,
  pax integer,
  starting_bid money, 
- bid_closing_time timestamp) AS
+ bid_closing_time timestamp,
+ driver_ic_num char,
+ vehicle_car_plate char) AS
 $func$
 
 BEGIN
 RETURN QUERY
-SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time
+SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time, R.driver_ic_num, R.vehicle_car_plate
 FROM ride R
 WHERE is_deleted = 'f';
 END
