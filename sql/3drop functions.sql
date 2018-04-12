@@ -24,6 +24,7 @@ DROP FUNCTION IF EXISTS public.add_ride(ride_start_location varchar, ride_start_
 
 --[DROP: GET]
 DROP FUNCTION IF EXISTS public.get_all_rides();
+DROP FUNCTION IF EXISTS public.get_all_vehicle();
 DROP FUNCTION IF EXISTS public.get_ride_by_id(ride_id INTEGER);
 DROP FUNCTION IF EXISTS public.get_rides_by_driver_ic_num(ride_driver_ic_num char);
 DROP FUNCTION IF EXISTS public.get_rides_by_vehicle_car_plate(ride_vehicle_car_plate char);

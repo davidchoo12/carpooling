@@ -347,9 +347,9 @@ BEGIN
     VALUES
     (driver_ic_num, driver_email);
   RETURN true;
-EXCEPTION
-  WHEN unique_violation THEN
-  RETURN false;
+-- EXCEPTION
+--   WHEN unique_violation THEN
+--   RETURN false;
 END;
 $$
 LANGUAGE plpgsql;
@@ -389,7 +389,7 @@ BEGIN
   INSERT INTO "user"
     (email, "name", contact, "password", is_staff, is_deleted)
     VALUES
-    (passenger_email, passenger_name, passenger_password, false, false);
+    (passenger_email, passenger_name, passenger_contact, passenger_password, false, false);
   INSERT INTO passenger
     (user_email)
     VALUES
@@ -599,15 +599,33 @@ $func$
 LANGUAGE plpgsql;
 
 
+--get_bids_by_passenger_user_email(email)
+CREATE OR REPLACE FUNCTION public.get_bids_by_id(bid_passenger_user_email varchar)
+ RETURNS TABLE (
+ passenger_user_email varchar,
+ ride_id INTEGER,
+ amount money,
+ "time" timestamp) AS
+$func$
+BEGIN
+RETURN QUERY
+SELECT B.passenger_user_email, B.ride_id, B.amount, B.time
+FROM bid B
+WHERE is_deleted = 'f'
+AND B.passenger_user_email = bid_passenger_user_email;
+END
+$func$
+LANGUAGE plpgsql;
+
+
 --get_vehicle_by_driver_ic_num(ic_num)
 CREATE OR REPLACE FUNCTION public.get_vehicle_by_driver_ic_num(vehicle_driver_ic_num char)
  RETURNS TABLE (
- car_plate char,
- model varchar,
- seat INTEGER,
- driver_ic_num char) AS
-$func$
-
+  car_plate char,
+  model varchar,
+  seat INTEGER,
+  driver_ic_num char) 
+AS $func$
 BEGIN
 RETURN QUERY
 SELECT V.car_plate, V.model, V.seat
@@ -618,7 +636,25 @@ END
 $func$
 LANGUAGE plpgsql;
 
-SELECT * FROM get_vehicle_by_driver_ic_num('S1234567B');
+
+--get_vehicle_by_car_plate(car_plate)
+CREATE OR REPLACE FUNCTION public.get_vehicle_by_driver_ic_num(vehicle_car_plate char)
+ RETURNS TABLE (
+ car_plate char,
+ model varchar,
+ seat INTEGER,
+ driver_ic_num char
+ ) AS
+$func$
+BEGIN
+RETURN QUERY
+SELECT V.car_plate, V.model, V.seat
+FROM vehicle V
+WHERE is_deleted = 'f'
+AND V.car_plate = vehicle_car_plate;
+END
+$func$
+LANGUAGE plpgsql;
 
 
 --get_ride_successful_bids(id)
