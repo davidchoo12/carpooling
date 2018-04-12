@@ -3,7 +3,7 @@
     <router-link
       to="/"
       class="navbar-brand">
-      <img src="img/logopopo.jpg">
+      <img src="img/logopopo.png">
     </router-link>
     <button
       class="navbar-toggler"
