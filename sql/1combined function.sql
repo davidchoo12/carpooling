@@ -17,8 +17,12 @@ BEGIN
 		AND EXISTS (
 			SELECT 1
 			FROM passenger
-			WHERE passenger_user_email = bid_passenger_user_email AND ride_id = bid_ride_id
-		)
+			WHERE user_email = bid_passenger_user_email
+		)AND EXISTS (
+      SELECT 1
+      FROM ride
+      WHERE "id" = bid_ride_id
+    )
 		RETURNING *
 	)
 	SELECT COUNT(*) INTO rowcount FROM row;
