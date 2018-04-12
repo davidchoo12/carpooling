@@ -375,7 +375,7 @@ BEGIN
 RETURN QUERY
 
 SELECT BID.passenger_user_email, BID.ride_id, BID.amount, BID.time FROM(
-SELECT B.passenger_user_email, B.ride_id, B.amount, B.time, row_number() OVER(ORDER BY B.amount desc) AS rownum
+SELECT B.passenger_user_email, B.ride_id, B.amount, B.time, row_number() OVER(ORDER BY B.amount, B.time desc) AS rownum
 FROM bid B
 WHERE NOT B.is_deleted
 AND B.ride_id = ride_bid_id
@@ -418,10 +418,10 @@ LANGUAGE plpgsql;
 --SELECT add_driver('S1234567', 'driver@gmail.com', 'driver name', 81234567, 'driver password');
 
 
---add_passenger(icnum, email, name, contact, password)
+--add_passenger() email, name, contact, password)
 --drop FUNCTION public.add_passenger(char, varchar, varchar, char, varchar);
 CREATE OR REPLACE FUNCTION public.add_passenger(
-  passenger_ic_num char,
+  -- passenger_ic_num char,
   passenger_email varchar,
   passenger_name varchar,
   passenger_contact char,
