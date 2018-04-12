@@ -12,7 +12,7 @@ DROP FUNCTION IF EXISTS public.update_bid_amount(bid_passenger_user_email varcha
 DROP FUNCTION IF EXISTS public.delete_bid(bid_passenger_user_email varchar(254), bid_ride_id int4);
 DROP FUNCTION IF EXISTS public.get_ride_successful_bids("id" int4);
 DROP FUNCTION IF EXISTS public.add_driver(char, varchar, varchar, char, varchar);
-DROP FUNCTION IF EXISTS public.add_passenger(char, varchar, varchar, char, varchar);
+DROP FUNCTION IF EXISTS public.add_passenger(varchar, varchar, char, varchar);
 DROP FUNCTION IF EXISTS public.get_staff_by_email(varchar);
 DROP FUNCTION IF EXISTS public.add_ride(ride_start_location varchar, ride_start_datetime timestamp, ride_end_location varchar, ride_end_datetime timestamp, ride_pax int4, ride_starting_bid money, ride_bid_closing_time timestamp, ride_driver_ic_num char, ride_vehicle_car_plate char);
 DROP FUNCTION IF EXISTS public.get_all_rides();
