@@ -39,6 +39,14 @@
           </router-link>
         </li>
         <li
+          v-if="user"
+          class="nav-item">
+          <a
+            class="nav-link"
+            @click="logout">Logout
+          </a>
+        </li>
+        <li
           v-if="!user"
           class="nav-item">
           <router-link
@@ -68,6 +76,12 @@ export default {
       type: Object,
       default: null,
       required: false
+    }
+  },
+  methods: {
+    logout () {
+      fetch('/api/logout')
+      .then(() => window.location.href = '/');
     }
   }
 }

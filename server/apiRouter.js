@@ -341,6 +341,12 @@ apiRouter.delete('/bid', authorizer.allow([roles.staff, roles.passenger]), (req,
   }
 });
 
+apiRouter.get('/logout', function(req, res) {
+  console.log('logout');
+  req.logout();
+  res.redirect('/');
+});
+
 function errorHandler(res) {
   return (err) => {
     console.log(err);
