@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link href="/open-iconic/font/css/open-iconic.css" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -13,31 +14,27 @@
 
 
 <style>
-    * {box-sizing: border-box;}
+    * {box-sizing: border-box;
+    }
     
+    body { 
+     
+      font-family: 'Open Sans';
+      font-size:13pt;
+     
+    }
+    .container {
+margin-top: 50px;
+ margin-left: 400px;
  
+}
+
+   h1{
+    font-size:16pt;
+
+
+   } 
     
-
-
-
-input[type=email], input[type=password] {
-  font-size:11pt;
-
-width: 300px;
-      background-color: #DED7EF;
-}
-.container {
-margin-top: 100px;
- margin-left: 18%;
- font-family: 'Open Sans';
-
-}
-c{
-  font-size:14pt;
-  font-family: 'Open Sans';
-
-}
-
     
     
     
@@ -103,12 +100,53 @@ c{
       .header a {
         float: none;
         display: block;
-        text-align: left;
+        text-align: center;
       }
       .header-right {
         float: none;
       }
+
+   
+
     }
+
+    
+input[type=text] {
+  background-color: #DED7EF;
+width: 350px;
+box-sizing: border-box;
+ 
+border-radius: 3px;
+
+border: 1px solid #ccc;
+background-position: 10px 10px; 
+background-repeat: no-repeat;
+padding: 12px 20px 12px 40px;
+-webkit-transition: width 0.4s ease-in-out;
+transition: width 0.4s ease-in-out;
+
+background-position: 10px 10px; 
+background-repeat: no-repeat;
+padding: 12px 20px 12px 40px;
+-webkit-transition: width 0.4s ease-in-out;
+transition: width 0.4s ease-in-out;
+}
+input[type=date] {
+  background-color: #DED7EF;
+width:250px;
+box-sizing: border-box;
+ 
+border-radius: 3px;
+font-size: 11px;
+border: 1px solid #ccc;
+background-position: 10px 10px; 
+background-repeat: no-repeat;
+padding: 12px 20px 12px 40px;
+-webkit-transition: width 0.4s ease-in-out;
+transition: width 0.4s ease-in-out;
+}
+
+ *{box-sizing: border-box;}
     </style>
 
 </head>
@@ -126,28 +164,28 @@ c{
 
         
   <div class="container">
-      <div class="container">
-          <div class="row">
-          <div class="col-sm-6">
-            <form>
-          <div class="form-group">
-             <p> <b><c>Log in to PoPo!</c></b></p>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-          
-          </div>
-          <div class="form-group">
-         
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Enter password">
-          </div>
-          <div class="form-check">
-          
-          </div>
-          <button type="button" class="btn btn-dark">Submit</button>
-          
-          </form>
-          </div>
-          </div>
-          </div>
+     
+          <h1>Select your route</h1>
+        <form>
+        <p>Pick-up Location
+        </p>
+        <p> <input type="text" name="search" placeholder="From..."></p>
+          <p>Drop-off Location
+        
+        </p>
+           <p><input type="text" name="search" placeholder="To..."></p>
+           <p>Date
+        </p>
+           
+             <p><input type="date" name="search" ></p>
+
+             <button type="button" class="btn btn-dark">SEARCH</button>
+        </form>
+     
+        
+        </div>
+
+  </div>
 
 </body>
 
