@@ -110,7 +110,7 @@ passport.deserializeUser(function(emailAndRole, done) {
 
 module.exports = (strategyName, successRedirect, failureRedirect) => {
   return passport.authenticate(strategyName, {
-    successReturnToOrRedirect: successRedirect,
+    successRedirect: successRedirect,
     failureRedirect: failureRedirect
   });
 };

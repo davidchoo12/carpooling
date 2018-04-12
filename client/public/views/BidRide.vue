@@ -102,6 +102,9 @@ export default {
       .then(res => {
         if (res.redirected) {
           window.location.href = res.url;
+        } else {
+          res.text()
+          .then(text => this.$toasted.show(text));
         }
       })
       .catch(err => this.$toasted.show(err));

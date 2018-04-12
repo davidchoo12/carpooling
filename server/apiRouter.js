@@ -15,28 +15,48 @@ apiRouter.use(require('express-session')({ secret: 'keyboard cat', resave: true,
 apiRouter.use(passport.initialize());
 apiRouter.use(passport.session());
 
+// for vue to get user email and role
+apiRouter.get('/user', (req, res) => {
+  console.log(req.user);
+  if (req.user) {
+    const { email, name, contact, role } = req.user;
+    res.send({
+      email: email,
+      name: name,
+      contact: contact,
+      role: role
+    });
+  } else {
+    res.send(null);
+  }
+});
 apiRouter.post('/admin/login',
   authenticator('staff-local', '/admin', '/login/admin')
 );
 apiRouter.post('/login/passenger',
   authenticator('passenger-local', '/', '/login')
-)
-apiRouter.get('/user', (req, res) => {
-  db.Users.getUsers()
-    .then(data => {
-      res.send(data.rows)
-    })
+);
+apiRouter.post('/login/driver',
+  authenticator('driver-local', '/', '/login/driver')
+);
+apiRouter.post('/register/passenger', (req, res) => {
+  const { email, name, contact, password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  db.Passengers.add(email, name, contact, hashedPassword)
+    .then(data =>
+      res.redirect('/')
+    )
     .catch(err => {
       console.error(err.stack);
       res.status(500).send('error');
     });
 });
-apiRouter.post('/user', (req, res) => {
-  const { email, name, contact, password } = req.body;
+apiRouter.post('/register/driver', (req, res) => {
+  const { ic_num, email, name, contact, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
-  db.addUser(email, name, contact, hashedPassword)
+  db.Drivers.add(ic_num, email, name, contact, hashedPassword)
     .then(data =>
-      res.send('added ' + data.rowCount + ' row(s).')
+      res.redirect('/')
     )
     .catch(err => {
       console.error(err.stack);
@@ -120,6 +140,7 @@ apiRouter.get('/ride/:id', (req, res) => {
   db.Rides.get(req.params.id)
     .then(data => {
       let result = data.rows[0];
+      // remove trailing .000Z to be compatible with html date input
       result.start_datetime = result.start_datetime.toISOString().replace('.000Z', '');
       result.end_datetime = result.end_datetime.toISOString().replace('.000Z', '');
       result.bid_closing_time = result.bid_closing_time.toISOString().replace('.000Z', '');
@@ -254,17 +275,20 @@ apiRouter.get('/bid/:passenger_user_email/:ride_id', (req, res, next) => {
   }
 });
 apiRouter.post('/bid', authorizer.allow([roles.staff, roles.passenger]), (req, res) => {
-  const { ride_id, amount } = req.body;
-  const passenger_user_email = req.user.email;
+  const ride_id = req.body.ride_id;
+  let amount = req.body.amount;
+  let passenger_user_email = req.user.email;
   if (req.body.passenger_user_email) {
-    passenger_user_email = reqe.body.passenger_user_email;
+    passenger_user_email = req.body.passenger_user_email;
   }
-  if (amount.indexOf('$') < 0) {
+  if (amount.toString().indexOf('$') < 0) {
     amount = '$' + amount;
   }
   db.Bids.add(passenger_user_email, ride_id, amount)
     .then(data => {
-      console.log('add bid', data);
+      if (!data.rows[0].add_bid) {
+        res.status(400).send('bid amount insufficient');
+      }
       res.send('added bid');
     })
     .catch(err => {

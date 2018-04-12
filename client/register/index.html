@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <style>
+    html, body {
+      height: 100%;
+      background: purple;
+    }
+    #particles-js {
+      height: 100%;
+      width: 100%;
+      position: fixed;
+    }
+    h3 {
+      color: white;
+    }
+  </style>
+  <script src="particles.min.js"></script>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="h-100 row d-flex align-items-center justify-content-center">
+    <div class="col-sm-3">
+      <h3>Passenger Registration</h3>
+      <form
+        method="post"
+        action="/api/register/passenger">
+        <div class="form-group">
+          <input
+            name="email"
+            class="form-control"
+            type="email"
+            placeholder="Email">
+        </div>
+        <div class="form-group">
+          <input
+            name="name"
+            class="form-control"
+            type="text"
+            placeholder="Name">
+        </div>
+        <div class="form-group">
+          <input
+            name="contact"
+            class="form-control"
+            type="text"
+            placeholder="Contact">
+        </div>
+        <div class="form-group">
+          <input
+            name="password"
+            class="form-control"
+            type="password"
+            placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-submit">Register</button>
+      </form>
+    </div>
+  </div>
+  <script>
+    particlesJS.load('particles-js', './particles.json', function() {
+      console.log('callback - particles.js config loaded');
+    });
+  </script>
+</body>
+</html>

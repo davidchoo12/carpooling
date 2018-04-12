@@ -39,6 +39,7 @@ const Users = {
     [email]);
   }
 };
+
 const Staffs = {
   get (email) {
     console.log('staffs get ' + email);
@@ -50,11 +51,41 @@ const Drivers = {
     console.log('drivers get ' + email);
     return pool.query('SELECT * FROM get_driver_by_email($1)', [email]);
   },
+  add (ic_num, email, name, contact, password) {
+    return pool.query('SELECT add_driver($1, $2, $3, $4, $5)',
+      [ic_num, email, name, contact, password]);
+  },
+  update (email, contact, password) {
+    if (!password) {
+      password = null;
+    }
+    return pool.query(`SELECT update_driver($1, $2, $3)`,
+      [email, contact, password]);
+  },
+  delete (email) {
+    return pool.query(`SELECT delete_driver($1)`,
+    [email]);
+  },
 };
 const Passengers = {
   get (email) {
     console.log('passengers get ' + email);
     return pool.query('SELECT * FROM get_passenger_by_email($1)', [email]);
+  },
+  add (email, name, contact, password) {
+    return pool.query('SELECT add_passenger($1, $2, $3, $4)',
+      [email, name, contact, password]);
+  },
+  update (email, contact, password) {
+    if (!password) {
+      password = null;
+    }
+    return pool.query(`SELECT update_passenger($1, $2, $3)`,
+      [email, contact, password]);
+  },
+  delete (email) {
+    return pool.query(`SELECT delete_passenger($1)`,
+    [email]);
   },
 };
 
@@ -110,6 +141,9 @@ const Vehicles = {
 const Bids = {
   getAll () {
     return pool.query('SELECT * FROM get_all_bids()');
+  },
+  getPassengerBids (passenger_user_email) {
+    return pool.query('SELECT * FROM get_bids_by_passenger_user_email($1)', [passenger_user_email]);
   },
   get (passenger_user_email, ride_id) {
     return pool.query('SELECT * FROM get_bid_by_id($1, $2)', [passenger_user_email, ride_id]);

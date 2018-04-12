@@ -105,8 +105,8 @@ export default {
         r.minBid = ride.starting_bid;
         this.rideList.push(r); // repopulate rideList
       })
-      .catch(err => this.$toasted.show(err));
-    });
+    })
+    .catch(err => this.$toasted.show(err));
   },
   methods: {
     updateList () {
