@@ -46,7 +46,8 @@ app.use('/admin', authorizer.allow([roles.staff]), express.static(PATH_DIST_DASH
 // app.use('/login/admin', express.static(path.join(__dirname, '../client/login/staff.html')));
 // app.use('/login/driver', express.static(path.join(__dirname, '../client/login/driver.html')));
 app.use('/login', express.static(path.join(__dirname, '../client/login'), { extensions: ['html'] }));
-
+app.use('/register', express.static(path.join(__dirname, '../client/register'), { extensions: ['html'] }));
+app.use('/particles.json', express.static(path.join(__dirname, '../client/public/views/particles.json')));
 // app.use(history({
 //   disableDotRule: true,
 //   verbose: true

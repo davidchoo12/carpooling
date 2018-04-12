@@ -27,6 +27,7 @@ module.exports = {
         return next();
       console.log('authorizer failed to authorize, redirecting');
       if (req.session) {
+        console.log('setting session returnTo ' + req.originalUrl);
         req.session.returnTo = req.originalUrl || req.url;
       }
       res.redirect(chooseRedirect(allowedRoles));

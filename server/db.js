@@ -39,22 +39,54 @@ const Users = {
     [email]);
   }
 };
+
 const Staffs = {
   get (email) {
-    console.log('staffs get ' + email);
+    console.log(' db: staffs get ' + email);
     return pool.query('SELECT * FROM get_staff_by_email($1)', [email]);
   },
 };
 const Drivers = {
   get (email) {
-    console.log('drivers get ' + email);
+    console.log(' db: drivers get ' + email);
     return pool.query('SELECT * FROM get_driver_by_email($1)', [email]);
+  },
+  add (ic_num, email, name, contact, password) {
+    console.log(' db: drivers add', ic_num, email, name, contact, password);
+    return pool.query('SELECT add_driver($1, $2, $3, $4, $5)',
+      [ic_num, email, name, contact, password]);
+  },
+  update (email, contact, password) {
+    if (!password) {
+      password = null;
+    }
+    return pool.query(`SELECT update_driver($1, $2, $3)`,
+      [email, contact, password]);
+  },
+  delete (email) {
+    return pool.query(`SELECT delete_driver($1)`,
+    [email]);
   },
 };
 const Passengers = {
   get (email) {
     console.log('passengers get ' + email);
     return pool.query('SELECT * FROM get_passenger_by_email($1)', [email]);
+  },
+  add (email, name, contact, password) {
+    return pool.query('SELECT add_passenger($1, $2, $3, $4)',
+      [email, name, contact, password]);
+  },
+  update (email, contact, password) {
+    if (!password) {
+      password = null;
+    }
+    return pool.query(`SELECT update_passenger($1, $2, $3)`,
+      [email, contact, password]);
+  },
+  delete (email) {
+    return pool.query(`SELECT delete_passenger($1)`,
+    [email]);
   },
 };
 
@@ -79,6 +111,12 @@ const Rides = {
   delete (id) {
     return pool.query('SELECT delete_ride($1)', [id]);
   },
+  search (start_location, end_location, start_date) {
+    console.log(start_date);
+    if (start_date == '')
+      start_date = null;
+    return pool.query('SELECT * FROM search_rides($1, $2, $3)', [start_location, end_location, start_date]);
+  }
 };
 
 const Vehicles = {
@@ -105,6 +143,9 @@ const Bids = {
   getAll () {
     return pool.query('SELECT * FROM get_all_bids()');
   },
+  getPassengerBids (passenger_user_email) {
+    return pool.query('SELECT * FROM get_bids_by_passenger_user_email($1)', [passenger_user_email]);
+  },
   get (passenger_user_email, ride_id) {
     return pool.query('SELECT * FROM get_bid_by_id($1, $2)', [passenger_user_email, ride_id]);
   },
@@ -119,6 +160,9 @@ const Bids = {
   delete (passenger_user_email, ride_id) {
     return pool.query('SELECT delete_bid($1, $2)', [passenger_user_email, ride_id]);
   },
+  getRideSuccessfulBids (ride_id) {
+    return pool.query('SELECT * FROM get_ride_successful_bids($1)', [ride_id]);
+  }
 };
 
 module.exports = {
