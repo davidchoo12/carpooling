@@ -347,9 +347,9 @@ BEGIN
     VALUES
     (driver_ic_num, driver_email);
   RETURN true;
-EXCEPTION
-  WHEN unique_violation THEN
-  RETURN false;
+-- EXCEPTION
+--   WHEN unique_violation THEN
+--   RETURN false;
 END;
 $$
 LANGUAGE plpgsql;
@@ -359,7 +359,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION public.add_vehicle(
 vehicle_car_plate char,
 vehicle_model varchar,
-vehicle_seat int,
+vehicle_seat INTEGER,
 vehicle_driver_ic_num char
 )
 RETURNS BOOLEAN
@@ -389,7 +389,7 @@ BEGIN
   INSERT INTO "user"
     (email, "name", contact, "password", is_staff, is_deleted)
     VALUES
-    (passenger_email, passenger_name, passenger_password, false, false);
+    (passenger_email, passenger_name, passenger_contact, passenger_password, false, false);
   INSERT INTO passenger
     (user_email)
     VALUES
@@ -406,7 +406,7 @@ CREATE OR REPLACE FUNCTION add_ride(
   ride_start_datetime timestamp,
   ride_end_location varchar,
   ride_end_datetime timestamp,
-  ride_pax int4,
+  ride_pax INTEGER,
   ride_starting_bid money,
   ride_bid_closing_time timestamp,
   ride_driver_ic_num char,
@@ -464,14 +464,16 @@ CREATE OR REPLACE FUNCTION public.get_all_rides()
  start_datetime timestamp,
  end_location varchar,
  end_datetime timestamp,
- pax integer,
+ pax INTEGER,
  starting_bid money, 
- bid_closing_time timestamp) AS
+ bid_closing_time timestamp,
+ driver_ic_num char,
+ vehicle_car_plate char) AS
 $func$
 
 BEGIN
 RETURN QUERY
-SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time
+SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time, R.driver_ic_num, R.vehicle_car_plate
 FROM ride R
 WHERE is_deleted = 'f';
 END
@@ -480,21 +482,23 @@ LANGUAGE plpgsql;
 
 
 --get_ride_by_id(ride_id)
-CREATE OR REPLACE FUNCTION public.get_ride_by_id(ride_id int)
+CREATE OR REPLACE FUNCTION public.get_ride_by_id(ride_id INTEGER)
  RETURNS TABLE (
  id Integer,
  start_location varchar,
  start_datetime timestamp,
  end_location varchar,
  end_datetime timestamp,
- pax integer,
+ pax INTEGER,
  starting_bid money, 
- bid_closing_time timestamp) AS
+ bid_closing_time timestamp,
+ driver_ic_num char,
+ vehicle_car_plate char) AS
 $func$
 
 BEGIN
 RETURN QUERY
-SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time
+SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time, R.driver_ic_num, R.vehicle_car_plate
 FROM ride R
 WHERE is_deleted = 'f'
 AND "id" = ride_id;
@@ -511,9 +515,11 @@ CREATE OR REPLACE FUNCTION public.get_rides_by_driver_ic_num(ride_driver_ic_num 
  start_datetime timestamp,
  end_location varchar,
  end_datetime timestamp,
- pax integer,
+ pax INTEGER,
  starting_bid money, 
- bid_closing_time timestamp) AS
+ bid_closing_time timestamp,
+ driver_ic_num char,
+ vehicle_car_plate char) AS
 $func$
 
 BEGIN
@@ -535,9 +541,11 @@ CREATE OR REPLACE FUNCTION public.get_rides_by_vehicle_car_plate(ride_vehicle_ca
  start_datetime timestamp,
  end_location varchar,
  end_datetime timestamp,
- pax integer,
+ pax INTEGER,
  starting_bid money, 
- bid_closing_time timestamp) AS
+ bid_closing_time timestamp,
+ driver_ic_num char,
+ vehicle_car_plate char) AS
 $func$
 
 BEGIN
@@ -555,7 +563,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION public.get_all_bids()
  RETURNS TABLE (
  passenger_user_email varchar,
- ride_id int,
+ ride_id INTEGER,
  amount money,
  "time" timestamp) AS
 $func$
@@ -571,10 +579,10 @@ LANGUAGE plpgsql;
 
 
 --get_bids_by_id(email, id)
-CREATE OR REPLACE FUNCTION public.get_bids_by_id(bid_passenger_user_email varchar, bid_ride_id int)
+CREATE OR REPLACE FUNCTION public.get_bids_by_id(bid_passenger_user_email varchar, bid_ride_id INTEGER)
  RETURNS TABLE (
  passenger_user_email varchar,
- ride_id int,
+ ride_id INTEGER,
  amount money,
  "time" timestamp) AS
 $func$
@@ -591,14 +599,33 @@ $func$
 LANGUAGE plpgsql;
 
 
+--get_bids_by_passenger_user_email(email)
+CREATE OR REPLACE FUNCTION public.get_bids_by_id(bid_passenger_user_email varchar)
+ RETURNS TABLE (
+ passenger_user_email varchar,
+ ride_id INTEGER,
+ amount money,
+ "time" timestamp) AS
+$func$
+BEGIN
+RETURN QUERY
+SELECT B.passenger_user_email, B.ride_id, B.amount, B.time
+FROM bid B
+WHERE is_deleted = 'f'
+AND B.passenger_user_email = bid_passenger_user_email;
+END
+$func$
+LANGUAGE plpgsql;
+
+
 --get_vehicle_by_driver_ic_num(ic_num)
 CREATE OR REPLACE FUNCTION public.get_vehicle_by_driver_ic_num(vehicle_driver_ic_num char)
  RETURNS TABLE (
- car_plate char,
- model varchar,
- seat int) AS
-$func$
-
+  car_plate char,
+  model varchar,
+  seat INTEGER,
+  driver_ic_num char) 
+AS $func$
 BEGIN
 RETURN QUERY
 SELECT V.car_plate, V.model, V.seat
@@ -609,14 +636,32 @@ END
 $func$
 LANGUAGE plpgsql;
 
-SELECT * FROM get_vehicle_by_driver_ic_num('S1234567B');
+
+--get_vehicle_by_car_plate(car_plate)
+CREATE OR REPLACE FUNCTION public.get_vehicle_by_driver_ic_num(vehicle_car_plate char)
+ RETURNS TABLE (
+ car_plate char,
+ model varchar,
+ seat INTEGER,
+ driver_ic_num char
+ ) AS
+$func$
+BEGIN
+RETURN QUERY
+SELECT V.car_plate, V.model, V.seat
+FROM vehicle V
+WHERE is_deleted = 'f'
+AND V.car_plate = vehicle_car_plate;
+END
+$func$
+LANGUAGE plpgsql;
 
 
 --get_ride_successful_bids(id)
 CREATE OR REPLACE FUNCTION get_ride_successful_bids(ride_bid_id Integer)
 RETURNS TABLE (
 passenger_user_email varchar,
-ride_id int, 
+ride_id INTEGER, 
 amount money,
 "time" timestamp
 ) AS $func$
@@ -685,7 +730,7 @@ CREATE OR REPLACE FUNCTION public.get_all_vehicle()
 RETURNS TABLE (
   car_plate char,
 	model varchar,
-	seat int,
+	seat INTEGER,
 	driver_ic_num char) AS
 $func$
 BEGIN
@@ -708,7 +753,7 @@ CREATE OR REPLACE FUNCTION public.search_rides(
   ride_start_datetime timestamp, 
   ride_end_location varchar, 
   ride_end_datetime timestamp, 
-  ride_pax int, 
+  ride_pax INTEGER, 
   ride_starting_bid money, 
   ride_bid_closing_time timestamp
   )
@@ -717,11 +762,12 @@ CREATE OR REPLACE FUNCTION public.search_rides(
  start_datetime timestamp,
  end_location varchar,
  end_datetime timestamp,
- pax integer,
+ pax INTEGER,
  starting_bid money, 
- bid_closing_time timestamp
- ) AS
-$func$
+ bid_closing_time timestamp,
+ driver_ic_num char,
+ vehicle_car_plate char
+ ) AS $func$
 BEGIN
 RETURN QUERY
 SELECT R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time
