@@ -42,16 +42,17 @@ const Users = {
 
 const Staffs = {
   get (email) {
-    console.log('staffs get ' + email);
+    console.log(' db: staffs get ' + email);
     return pool.query('SELECT * FROM get_staff_by_email($1)', [email]);
   },
 };
 const Drivers = {
   get (email) {
-    console.log('drivers get ' + email);
+    console.log(' db: drivers get ' + email);
     return pool.query('SELECT * FROM get_driver_by_email($1)', [email]);
   },
   add (ic_num, email, name, contact, password) {
+    console.log(' db: drivers add', ic_num, email, name, contact, password);
     return pool.query('SELECT add_driver($1, $2, $3, $4, $5)',
       [ic_num, email, name, contact, password]);
   },

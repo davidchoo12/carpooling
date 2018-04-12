@@ -23,6 +23,14 @@
           </router-link>
         </li>
         <li
+          v-if="user && user.role == 'passenger'"
+          class="nav-item">
+          <router-link
+            to="/mybids"
+            class="nav-link">My Bids
+          </router-link>
+        </li>
+        <li
           v-if="user"
           class="nav-item">
           <router-link
@@ -33,18 +41,18 @@
         <li
           v-if="!user"
           class="nav-item">
-          <a
-            href="/login"
+          <router-link
+            to="/login"
             class="nav-link">Login
-          </a>
+          </router-link>
         </li>
         <li
           v-if="!user"
           class="nav-item">
-          <a
-            href="/register"
+          <router-link
+            to="/register"
             class="nav-link">Register
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>

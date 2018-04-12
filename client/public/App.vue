@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <navbar :user="user" />
+    <navbar
+      v-if="!$route.path.includes('login') && !$route.path.includes('register')"
+      :user="user" />
     <router-view :user="user" />
   </div>
 </template>
@@ -18,11 +20,13 @@ export default {
     }
   },
   created () {
+    console.log('created');
     fetch('/api/user', {
       credentials: 'same-origin'
     })
     .then(res => res.text())
     .then(body => {
+      console.log(body);
       if (body)
         this.user = JSON.parse(body);
     });
