@@ -16,10 +16,11 @@ apiRouter.use(passport.initialize());
 apiRouter.use(passport.session());
 
 apiRouter.post('/admin/login',
-  authenticator('staff-local', '/admin', '/login/admin'),
-  (req, res) => {
-    res.redirect('/admin');
-});
+  authenticator('staff-local', '/admin', '/login/admin')
+);
+apiRouter.post('/login/passenger',
+  authenticator('passenger-local', '/', '/login')
+)
 apiRouter.get('/user', (req, res) => {
   db.Users.getUsers()
     .then(data => {
@@ -75,7 +76,7 @@ apiRouter.delete('/user', (req, res) => {
     });
 });
 
-apiRouter.get('/ride', authorizer.allow([roles.staff]), (req, res) => {
+apiRouter.get('/ride', (req, res) => {
   db.Rides.getAll()
     .then(data => {
       let result = data.rows;
@@ -85,6 +86,33 @@ apiRouter.get('/ride', authorizer.allow([roles.staff]), (req, res) => {
         e.bid_closing_time = e.bid_closing_time.toISOString().replace('.000Z', '');
       });
       res.send(result);
+    })
+    .catch(errorHandler(res));
+});
+apiRouter.post('/ride/search', (req, res) => {
+  const { startLocation, endLocation, startDate } = req.body;
+  db.Rides.search(startLocation, endLocation, startDate)
+    .then(data => {
+      let result = data.rows;
+      let successBidsQueries = [];
+      result.forEach(e => {
+        successBidsQueries.push(db.Bids.getRideSuccessfulBids(e.id));
+        e.start_datetime = e.start_datetime.toISOString().replace('.000Z', '');
+        e.end_datetime = e.end_datetime.toISOString().replace('.000Z', '');
+        e.bid_closing_time = e.bid_closing_time.toISOString().replace('.000Z', '');
+      });
+      Promise.all(successBidsQueries)
+      .then(values => {
+        values.forEach(b => {
+          const bidCount = b.rowCount;
+          const resultRideIndex = result.findIndex(e => e.id == b.rows[0].ride_id);
+          if (bidCount == result[resultRideIndex].pax) {// if fully booked, use minimum bid in successBidsQueries, increment amount (which is a $x.xx string)
+            const minBidAmt = Math.min(b.rows.map(e => e.amount));
+            result[resultRideIndex].starting_bid = '$' + parseFloat(minBidAmt.substr(1)) + 1;
+          }
+        });
+        res.send(result);
+      });
     })
     .catch(errorHandler(res));
 });
@@ -114,6 +142,7 @@ apiRouter.put('/ride', (req, res) => {
   if (req.user.role == roles.staff) {
     updateRide();
   } else {
+    // check whether user owns ride
     const getRide = db.Rides.get(req.body.id)
     const getDriver = db.Drivers.get(req.user.email)
     Promise.all([getRide, getDriver])
@@ -225,7 +254,14 @@ apiRouter.get('/bid/:passenger_user_email/:ride_id', (req, res, next) => {
   }
 });
 apiRouter.post('/bid', authorizer.allow([roles.staff, roles.passenger]), (req, res) => {
-  const { passenger_user_email, ride_id, amount } = req.body;
+  const { ride_id, amount } = req.body;
+  const passenger_user_email = req.user.email;
+  if (req.body.passenger_user_email) {
+    passenger_user_email = reqe.body.passenger_user_email;
+  }
+  if (amount.indexOf('$') < 0) {
+    amount = '$' + amount;
+  }
   db.Bids.add(passenger_user_email, ride_id, amount)
     .then(data => {
       console.log('add bid', data);

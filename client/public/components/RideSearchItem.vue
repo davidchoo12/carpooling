@@ -25,9 +25,11 @@
       <small>Minimum bid:</small>
       <br>
       <h5>{{ minBid }}</h5>
-      <button class="btn btn-large btn-primary">
+      <router-link
+        :to="'ride/' + id"
+        class="btn btn-large btn-primary">
         BID NOW
-      </button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -37,7 +39,7 @@ export default {
   name: 'RideSearchItem',
   props: {
     id: {
-      type: String,
+      type: Number,
       required: true
     },
     startLocation: {
@@ -62,7 +64,7 @@ export default {
 
 <style>
   .item {
-    border-bottom: 1px solid grey;
+    border-top: 1px solid grey;
     padding: 15px;
   }
   .oi-map-marker:before {

@@ -79,6 +79,12 @@ const Rides = {
   delete (id) {
     return pool.query('SELECT delete_ride($1)', [id]);
   },
+  search (start_location, end_location, start_date) {
+    console.log(start_date);
+    if (start_date == '')
+      start_date = null;
+    return pool.query('SELECT * FROM search_rides($1, $2, $3)', [start_location, end_location, start_date]);
+  }
 };
 
 const Vehicles = {
@@ -119,6 +125,9 @@ const Bids = {
   delete (passenger_user_email, ride_id) {
     return pool.query('SELECT delete_bid($1, $2)', [passenger_user_email, ride_id]);
   },
+  getRideSuccessfulBids (ride_id) {
+    return pool.query('SELECT * FROM get_ride_successful_bids($1)', [ride_id]);
+  }
 };
 
 module.exports = {

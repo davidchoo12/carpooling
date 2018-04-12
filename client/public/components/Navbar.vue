@@ -1,10 +1,10 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a
-      href=""
+    <router-link
+      to="/"
       class="navbar-brand">
       <img src="img/logopopo.jpg">
-    </a>
+    </router-link>
     <button
       class="navbar-toggler"
       type="button"
