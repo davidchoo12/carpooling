@@ -15,7 +15,7 @@
               v-model="formData.email"
               class="form-control"
               type="email"
-              placeholder="email">
+              placeholder="Email">
           </div>
           <div
             v-if="forDriver"
@@ -104,12 +104,10 @@ export default {
         credentials: 'same-origin'
       })
       .then(res => {
-        if (res.redirected) {
-          if (!res.url.includes('login')) {
-            window.location.href = '/';
-          } else {
-            this.$toasted.show('registration failed');
-          }
+        if (res.redirected && !res.url.includes('login')) {
+          window.location.href = '/';
+        } else {
+          this.$toasted.show('registration failed');
         }
       })
       .catch(this.$toasted.show);

@@ -49,7 +49,6 @@ export default {
     if (!this.$parent.user) {
       this.$router.push('/login');
     }
-    console.log(this.formatDateString);
     fetch('/api/bid/' + this.$parent.user.email, {
       credentials: 'same-origin'
     })

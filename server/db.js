@@ -94,6 +94,9 @@ const Rides = {
   getAll () {
     return pool.query('SELECT * FROM get_all_rides()');
   },
+  getDriverRides (driver_ic_num) {
+    return pool.query('SELECT * FROM get_rides_by_driver_ic_num($1)', [driver_ic_num]);
+  },
   get (id) {
     return pool.query('SELECT * FROM get_ride_by_id($1)', [id]);
   },
@@ -122,6 +125,9 @@ const Rides = {
 const Vehicles = {
   getAll () {
     return pool.query('SELECT * FROM get_all_vehicles()');
+  },
+  getDriverVehicles (driver_ic_num) {
+    return pool.query('SELECT * FROM get_vehicle_by_driver_ic_num($1)', [driver_ic_num]);
   },
   get (car_plate) {
     return pool.query('SELECT * FROM get_vehicle_by_car_plate($1)', [car_plate]);

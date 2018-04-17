@@ -23,6 +23,14 @@
           </router-link>
         </li>
         <li
+          v-if="user && user.role == 'driver'"
+          class="nav-item">
+          <router-link
+            to="/myrides"
+            class="nav-link">My Rides
+          </router-link>
+        </li>
+        <li
           v-if="user && user.role == 'passenger'"
           class="nav-item">
           <router-link
@@ -42,8 +50,8 @@
           v-if="user"
           class="nav-item">
           <a
-            class="nav-link"
-            @click="logout">Logout
+            href="/api/logout"
+            class="nav-link">Logout
           </a>
         </li>
         <li
@@ -51,7 +59,15 @@
           class="nav-item">
           <router-link
             to="/login"
-            class="nav-link">Login
+            class="nav-link">Login (Passenger)
+          </router-link>
+        </li>
+        <li
+          v-if="!user"
+          class="nav-item">
+          <router-link
+            to="/login/driver"
+            class="nav-link">Login (Driver)
           </router-link>
         </li>
         <li
@@ -76,12 +92,6 @@ export default {
       type: Object,
       default: null,
       required: false
-    }
-  },
-  methods: {
-    logout () {
-      fetch('/api/logout')
-      .then(() => window.location.href = '/');
     }
   }
 }

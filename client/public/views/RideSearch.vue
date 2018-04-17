@@ -102,7 +102,7 @@ export default {
         r.endLocation = ride.end_location;
         const d = new Date(ride.start_datetime);
         r.departureTimestamp = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()} ${d.getHours() % 12}:${d.getMinutes().toString().padStart(2, '0')} ${d.getHours >= 12 ? 'AM' : 'PM'}`;
-        r.minBid = ride.starting_bid;
+        r.minBid = ride.min_success_bid || ride.starting_bid;
         this.rideList.push(r); // repopulate rideList
       })
     })
@@ -128,7 +128,7 @@ export default {
           r.endLocation = ride.end_location;
           const d = new Date(ride.start_datetime);
           r.departureTimestamp = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()} ${d.getHours() % 12}:${d.getMinutes().toString().padStart(2, '0')} ${d.getHours >= 12 ? 'AM' : 'PM'}`;
-          r.minBid = ride.starting_bid;
+          r.minBid = ride.min_success_bid || ride.starting_bid;
           this.rideList.push(r); // repopulate rideList
         });
       })

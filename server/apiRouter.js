@@ -20,12 +20,22 @@ apiRouter.get('/user', (req, res) => {
   console.log('req.user', req.user);
   if (req.user) {
     const { email, name, contact, role } = req.user;
-    res.send({
-      email: email,
-      name: name,
-      contact: contact,
-      role: role
-    });
+    if (req.user.role == 'driver') {
+      res.send({
+        email: email,
+        ic_num: req.user.ic_num,
+        name: name,
+        contact: contact,
+        role: role
+      });
+    } else {
+      res.send({
+        email: email,
+        name: name,
+        contact: contact,
+        role: role
+      });
+    }
   } else {
     res.send(null);
   }
@@ -48,7 +58,7 @@ apiRouter.post('/register/passenger', (req, res, next) => {
     })
     .catch(errorHandler(res));
 }, authenticator('passenger-local', '/', '/login'));
-apiRouter.post('/register/driver', (req, res) => {
+apiRouter.post('/register/driver', (req, res, next) => {
   const { ic_num, email, name, contact, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
   db.Drivers.add(ic_num, email, name, contact, hashedPassword)
@@ -80,19 +90,47 @@ apiRouter.delete('/user', (req, res) => {
     })
     .catch(errorHandler(res));
 });
-
 apiRouter.get('/ride', (req, res) => {
-  db.Rides.getAll()
+  if (req.user && req.user.role && req.user.role == roles.driver) {
+    db.Rides.getDriverRides(req.user.ic_num)
+      .then(data => {
+        let result = data.rows;
+        result.forEach(e => {
+          e.start_datetime = e.start_datetime.toISOString().replace('.000Z', '');
+          e.end_datetime = e.end_datetime.toISOString().replace('.000Z', '');
+          e.bid_closing_time = e.bid_closing_time.toISOString().replace('.000Z', '');
+        });
+        res.send(result);
+      })
+      .catch(errorHandler(res));
+  } else {
+    db.Rides.getAll()
     .then(data => {
       let result = data.rows;
+      let successBidsQueries = [];
       result.forEach(e => {
+        successBidsQueries.push(db.Bids.getRideSuccessfulBids(e.id));
         e.start_datetime = e.start_datetime.toISOString().replace('.000Z', '');
         e.end_datetime = e.end_datetime.toISOString().replace('.000Z', '');
         e.bid_closing_time = e.bid_closing_time.toISOString().replace('.000Z', '');
       });
-      res.send(result);
+      Promise.all(successBidsQueries)
+      .then(values => {
+        values.forEach(b => {
+          const bidCount = b.rowCount;
+          if (bidCount > 0) {
+            const resultRideIndex = result.findIndex(e => e.id == b.rows[0].ride_id);
+            if (bidCount == result[resultRideIndex].pax) {// if fully booked, use minimum bid in successBidsQueries, increment amount (which is a $x.xx string)
+              const minBidAmt = Math.min(...b.rows.map(e => parseFloat(e.amount.substr(1))));
+              result[resultRideIndex].min_success_bid = '$' + minBidAmt.toFixed(2);
+            }
+          }
+        });
+        res.send(result);
+      });
     })
     .catch(errorHandler(res));
+  }
 });
 apiRouter.post('/ride/search', (req, res) => {
   const { startLocation, endLocation, startDate } = req.body;
@@ -110,10 +148,12 @@ apiRouter.post('/ride/search', (req, res) => {
       .then(values => {
         values.forEach(b => {
           const bidCount = b.rowCount;
-          const resultRideIndex = result.findIndex(e => e.id == b.rows[0].ride_id);
-          if (bidCount == result[resultRideIndex].pax) {// if fully booked, use minimum bid in successBidsQueries, increment amount (which is a $x.xx string)
-            const minBidAmt = Math.min(b.rows.map(e => e.amount));
-            result[resultRideIndex].starting_bid = '$' + parseFloat(minBidAmt.substr(1)) + 1;
+          if (bidCount > 0) {
+            const resultRideIndex = result.findIndex(e => e.id == b.rows[0].ride_id);
+            if (bidCount == result[resultRideIndex].pax) {// if fully booked, use minimum bid in successBidsQueries, increment amount (which is a $x.xx string)
+              const minBidAmt = Math.min(...b.rows.map(e => parseFloat(e.amount.substr(1))));
+              result[resultRideIndex].min_success_bid = '$' + minBidAmt.toFixed(2);
+            }
           }
         });
         res.send(result);
@@ -124,12 +164,28 @@ apiRouter.post('/ride/search', (req, res) => {
 apiRouter.get('/ride/:id', (req, res) => {
   db.Rides.get(req.params.id)
     .then(data => {
-      let result = data.rows[0];
-      // remove trailing .000Z to be compatible with html date input
-      result.start_datetime = result.start_datetime.toISOString().replace('.000Z', '');
-      result.end_datetime = result.end_datetime.toISOString().replace('.000Z', '');
-      result.bid_closing_time = result.bid_closing_time.toISOString().replace('.000Z', '');
-      res.send(result);
+      let result = data.rows;
+      let successBidsQueries = [];
+      result.forEach(e => {
+        successBidsQueries.push(db.Bids.getRideSuccessfulBids(e.id));
+        e.start_datetime = e.start_datetime.toISOString().replace('.000Z', '');
+        e.end_datetime = e.end_datetime.toISOString().replace('.000Z', '');
+        e.bid_closing_time = e.bid_closing_time.toISOString().replace('.000Z', '');
+      });
+      Promise.all(successBidsQueries)
+      .then(values => {
+        values.forEach(b => {
+          const bidCount = b.rowCount;
+          if (bidCount > 0) {
+            const resultRideIndex = result.findIndex(e => e.id == b.rows[0].ride_id);
+            if (bidCount == result[resultRideIndex].pax) {// if fully booked, use minimum bid in successBidsQueries, increment amount (which is a $x.xx string)
+              const minBidAmt = Math.min(...b.rows.map(e => parseFloat(e.amount.substr(1))));
+              result[resultRideIndex].min_success_bid = '$' + minBidAmt.toFixed(2);
+            }
+          }
+        });
+        res.send(result[0]);
+      });
     })
     .catch(errorHandler(res));
 });
@@ -173,20 +229,50 @@ apiRouter.put('/ride', (req, res) => {
   }
 });
 apiRouter.delete('/ride', authorizer.allow([roles.staff, roles.driver]), (req, res) => {
-  db.Rides.delete(req.body.id)
-    .then(data => {
-      console.log('delete ride', data);
-      res.send('deleted ride');
+  if (req.user.role == roles.staff) {
+    deleteRide();
+  } else {
+    // check whether user owns ride
+    const getRide = db.Rides.get(req.body.id)
+    const getDriver = db.Drivers.get(req.user.email)
+    Promise.all([getRide, getDriver])
+    .then(values => {
+      const ride = values[0].rows[0];
+      const driver = values[1].rows[0];
+      if (ride.driver_ic_num == driver.ic_num) {
+        deleteRide();
+      } else {
+        res.status(403);
+      }
     })
     .catch(errorHandler(res));
+  }
+  function deleteRide() {
+    db.Rides.delete(req.body.id)
+      .then(data => {
+        console.log('delete ride', data);
+        res.send('deleted ride');
+      })
+      .catch(errorHandler(res));
+  }
 });
 
-apiRouter.get('/vehicle', authorizer.allow([roles.staff]), (req, res) => {
-  db.Vehicles.getAll()
-    .then(data => {
-      res.send(data.rows);
-    })
-    .catch(errorHandler(res));
+apiRouter.get('/vehicle', authorizer.allow([roles.staff, roles.driver]), (req, res) => {
+  if (req.user.role == 'staff') {
+    db.Vehicles.getAll()
+      .then(data => {
+        res.send(data.rows);
+      })
+      .catch(errorHandler(res));
+  } else if (req.user.role == 'driver') {
+    db.Vehicles.getDriverVehicles(req.user.ic_num)
+      .then(data => {
+        res.send(data.rows);
+      })
+      .catch(errorHandler(res));
+  } else {
+    res.status(403).send('must be a driver');
+  }
 });
 apiRouter.get('/vehicle/:car_plate', authorizer.allow([roles.staff]), (req, res) => {
   db.Vehicles.get(req.params.car_plate)
@@ -205,21 +291,61 @@ apiRouter.post('/vehicle', authorizer.allow([roles.staff, roles.driver]), (req, 
     .catch(errorHandler(res));
 });
 apiRouter.put('/vehicle', authorizer.allow([roles.staff, roles.driver]), (req, res) => {
-  const { car_plate, model, seat } = req.body;
-  db.Vehicles.update(car_plate, model, seat)
-    .then(data => {
-      console.log('update vehicle', data);
-      res.send('updated vehicle');
+  if (req.user.role == roles.staff) {
+    updateVehicle();
+  } else {
+    // check whether user owns vehicle
+    const getVehicle = db.Vehicles.get(req.body.car_plate)
+    const getDriver = db.Drivers.get(req.user.email)
+    Promise.all([getVehicle, getDriver])
+    .then(values => {
+      const vehicle = values[0].rows[0];
+      const driver = values[1].rows[0];
+      if (vehicle.driver_ic_num == driver.ic_num) {
+        updateVehicle();
+      } else {
+        res.status(403);
+      }
     })
     .catch(errorHandler(res));
+  }
+  function updateVehicle() {
+    const { car_plate, model, seat } = req.body;
+    db.Vehicles.update(car_plate, model, seat)
+      .then(data => {
+        console.log('update vehicle', data);
+        res.send('updated vehicle');
+      })
+      .catch(errorHandler(res));
+  }
 });
 apiRouter.delete('/vehicle', authorizer.allow([roles.staff, roles.driver]), (req, res) => {
-  db.Vehicles.delete(req.body.car_plate)
-    .then(data => {
-      console.log('delete vehicle', data);
-      res.send('deleted vehicle');
+  if (req.user.role == roles.staff) {
+    deleteVehicle();
+  } else {
+    // check whether user owns vehicle
+    const getVehicle = db.Vehicles.get(req.body.car_plate)
+    const getDriver = db.Drivers.get(req.user.email)
+    Promise.all([getVehicle, getDriver])
+    .then(values => {
+      const vehicle = values[0].rows[0];
+      const driver = values[1].rows[0];
+      if (vehicle.driver_ic_num == driver.ic_num) {
+        deleteVehicle();
+      } else {
+        res.status(403);
+      }
     })
     .catch(errorHandler(res));
+  }
+  function deleteVehicle() {
+    db.Vehicles.delete(req.body.car_plate)
+      .then(data => {
+        console.log('delete vehicle', data);
+        res.send('deleted vehicle');
+      })
+      .catch(errorHandler(res));
+  }
 });
 
 apiRouter.get('/bid', authorizer.allow([roles.staff]), (req, res) => {
@@ -350,7 +476,7 @@ apiRouter.get('/logout', function(req, res) {
 function errorHandler(res) {
   return (err) => {
     console.log(err);
-    let message = 'error';
+    let message;
     if (err.constraint) { // error due to constraint violation
       message = (function (constraint) {
         switch (constraint) {
@@ -360,8 +486,11 @@ function errorHandler(res) {
             return 'invalid ic number';
         }
       })(err.constraint);
+      if (err.constraint.indexOf('pkey') > 0) {
+        message = 'duplicate key'
+      }
     }
-    res.status(500).send(message);
+    res.status(500).send(message ? message : err.error);
   };
 }
 

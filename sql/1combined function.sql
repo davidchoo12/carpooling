@@ -83,16 +83,15 @@ CREATE OR REPLACE FUNCTION public.update_vehicle(
 RETURNS boolean AS
 $BODY$
 BEGIN
-    UPDATE  vehicle
-    SET 
-      model = coalesce(vehicle_model, model),
-      seat = coalesce(vehicle_seat, seat)
-         
-    WHERE car_plate = vehicle_car_plate
+  UPDATE vehicle
+  SET
+    model = coalesce(vehicle_model, model),
+    seat = coalesce(vehicle_seat, seat)
+  WHERE car_plate = vehicle_car_plate
 	AND NOT is_deleted
 	AND EXISTS (
 		SELECT 1
-		FROM dirver
+		FROM driver
 		WHERE ic_num = vehicle.driver_ic_num
 	);
 	RETURN true;
@@ -528,10 +527,10 @@ $func$
 
 BEGIN
 RETURN QUERY
-SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time
+SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time, R.driver_ic_num, R.vehicle_car_plate
 FROM ride R
 WHERE is_deleted = 'f'
-AND driver_ic_num = ride_driver_ic_num;
+AND R.driver_ic_num = ride_driver_ic_num;
 END
 $func$
 LANGUAGE plpgsql;
@@ -554,10 +553,10 @@ $func$
 
 BEGIN
 RETURN QUERY
-SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time
+SELECT R.id, R.start_location, R.start_datetime, R.end_location, R.end_datetime, R.pax, R.starting_bid, R.bid_closing_time, R.driver_ic_num, R.vehicle_car_plate
 FROM ride R
 WHERE is_deleted = 'f'
-AND vehicle_car_plate = ride_vehicle_car_plate;
+AND R.vehicle_car_plate = ride_vehicle_car_plate;
 END
 $func$
 LANGUAGE plpgsql;
@@ -596,7 +595,7 @@ RETURN QUERY
 SELECT B.passenger_user_email, B.ride_id, B.amount, B.time
 FROM bid B
 WHERE is_deleted = 'f'
-AND passenger_user_email = bid_passenger_user_email 
+AND B.passenger_user_email = bid_passenger_user_email 
 AND ride_id = bid_ride_id;
 END
 $func$
@@ -632,17 +631,17 @@ CREATE OR REPLACE FUNCTION public.get_vehicle_by_driver_ic_num(vehicle_driver_ic
 AS $func$
 BEGIN
 RETURN QUERY
-SELECT V.car_plate, V.model, V.seat
+SELECT V.car_plate, V.model, V.seat, V.driver_ic_num
 FROM vehicle V
 WHERE is_deleted = 'f'
-AND driver_ic_num = vehicle_driver_ic_num;
+AND V.driver_ic_num = vehicle_driver_ic_num;
 END
 $func$
 LANGUAGE plpgsql;
 
 
 --get_vehicle_by_car_plate(car_plate)
-CREATE OR REPLACE FUNCTION public.get_vehicle_by_driver_ic_num(vehicle_car_plate char)
+CREATE OR REPLACE FUNCTION public.get_vehicle_by_car_plate(vehicle_car_plate char)
  RETURNS TABLE (
  car_plate char,
  model varchar,
@@ -652,7 +651,7 @@ CREATE OR REPLACE FUNCTION public.get_vehicle_by_driver_ic_num(vehicle_car_plate
 $func$
 BEGIN
 RETURN QUERY
-SELECT V.car_plate, V.model, V.seat
+SELECT V.car_plate, V.model, V.seat, V.driver_ic_num
 FROM vehicle V
 WHERE is_deleted = 'f'
 AND V.car_plate = vehicle_car_plate;
@@ -673,7 +672,7 @@ BEGIN
 RETURN QUERY
 
 SELECT BID.passenger_user_email, BID.ride_id, BID.amount, BID.time FROM(
-SELECT B.passenger_user_email, B.ride_id, B.amount, B.time, row_number() OVER(ORDER BY B.amount, B.time desc) AS rownum
+SELECT B.passenger_user_email, B.ride_id, B.amount, B.time, row_number() OVER(ORDER BY B.amount desc, B.time desc) AS rownum
 FROM bid B
 WHERE NOT B.is_deleted
 AND B.ride_id = ride_bid_id

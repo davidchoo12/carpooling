@@ -139,7 +139,7 @@ export default {
       this.departureTimestamp = this.formatDateString(new Date(ride.start_datetime));
       this.arrivalTimestamp = this.formatDateString(new Date(ride.end_datetime));
       this.bidCloseTimestamp = this.formatDateString(new Date(ride.bid_closing_time));
-      this.minBid = ride.starting_bid;
+      this.minBid = ride.min_success_bid || ride.starting_bid;
       this.inputBid = this.inputBid ? this.inputBid : parseFloat(this.minBid.substr(1)); // set input bid if not yet set
     })
     .catch(err => this.$toasted.show(err));
